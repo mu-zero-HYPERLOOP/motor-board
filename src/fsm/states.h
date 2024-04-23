@@ -1,7 +1,7 @@
 #pragma once
 
-#include "canzero.h"
-#include "timestamp.h"
+#include "canzero/canzero.h"
+#include "util/timestamp.h"
 
 motor_state init_state_next(motor_command cmd, Duration time_since_last_transition);
 

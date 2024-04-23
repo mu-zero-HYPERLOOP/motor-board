@@ -1,11 +1,15 @@
-#include "fsm.h"
+#include "fsm/fsm.h"
 
-void main() {
-    
-    fsm_init();
+#include "firmware/Accelerometer.h"
 
-    while(true) {
-        fsm_next();
-    }
+int main() {
 
+  Accelerometer::begin();
+
+  while (true) {
+    // acceleration readings (x,y,z are floats)
+    const auto &[x, y, z] = Accelerometer::read_float_blocking();
+
+    Serial.printf("{x = %f, y = %f, z = %f}\n", x, y, z);
+  }
 }

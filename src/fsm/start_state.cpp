@@ -1,7 +1,7 @@
-#include "canzero.h"
-#include "states.h"
+#include "canzero/canzero.h"
+#include "fsm/states.h"
 
 motor_state start_state_next(motor_command cmd,
                             Duration time_since_last_transition) {
-    return State::running;
+    return motor_state_START;
 }
