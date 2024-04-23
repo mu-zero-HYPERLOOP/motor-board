@@ -181,32 +181,34 @@ void pwm_init() {
 
   FLEXPWM4_SM0VAL4 = -PWMCycles;
 
-  FLEXPWM4_SM1VAL4 = -PWMCycles; // Interliev AUS
+  FLEXPWM4_SM1VAL4 = -PWMCycles; // adc-trigger raises TRIG0
+  FLEXPWM4_SM1VAL5 = 0; // half cycle adc trigger raises TRIG1
+
 
   FLEXPWM3_SM1VAL2 = -Cycles_PWM3_SM1;
   FLEXPWM3_SM1VAL3 = Cycles_PWM3_SM1;
-  FLEXPWM3_SM1VAL4 = 0;
-  FLEXPWM3_SM1VAL5 = 0;
+  /* FLEXPWM3_SM1VAL4 = 0; */
+  /* FLEXPWM3_SM1VAL5 = 0; */
 
   FLEXPWM1_SM3VAL2 = -Cycles_PWM1_SM3;
   FLEXPWM1_SM3VAL3 = Cycles_PWM1_SM3;
-  FLEXPWM1_SM3VAL4 = 0; // adc trigger
-  FLEXPWM1_SM3VAL5 = 0; // adc trigger
+  /* FLEXPWM1_SM3VAL4 = 0; // adc trigger */
+  /* FLEXPWM1_SM3VAL5 = 0; // adc trigger */
 
   FLEXPWM2_SM0VAL2 = -Cycles_PWM2_SM0;
   FLEXPWM2_SM0VAL3 = Cycles_PWM2_SM0;
-  FLEXPWM2_SM0VAL4 = 0; // adc trigger
-  FLEXPWM2_SM0VAL5 = 0; // adc trigger
+  /* FLEXPWM2_SM0VAL4 = 0; // adc trigger */
+  /* FLEXPWM2_SM0VAL5 = 0; // adc trigger */
 
   FLEXPWM2_SM2VAL2 = -Cycles_PWM2_SM2;
   FLEXPWM2_SM2VAL3 = Cycles_PWM2_SM2;
-  FLEXPWM2_SM2VAL4 = 0; // adc trigger
-  FLEXPWM2_SM2VAL5 = 0; // adc trigger
+  /* FLEXPWM2_SM2VAL4 = 0; // adc trigger */
+  /* FLEXPWM2_SM2VAL5 = 0; // adc trigger */
 
   FLEXPWM2_SM3VAL2 = -Cycles_PWM2_SM3;
   FLEXPWM2_SM3VAL3 = Cycles_PWM2_SM3;
-  FLEXPWM2_SM3VAL4 = 0; // adc trigger
-  FLEXPWM2_SM3VAL5 = 0; // adc trigger
+  /* FLEXPWM2_SM3VAL4 = 0; // adc trigger */
+  /* FLEXPWM2_SM3VAL5 = 0; // adc trigger */
 
   /////// Phase U2   PWM4 SM 2////////////////
   // NOTE: used to trigger compare PWM_OUT_TRIG0
