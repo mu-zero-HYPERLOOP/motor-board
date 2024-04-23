@@ -1,9 +1,11 @@
 #include "Accelerometer.h"
 
+#include "pinout.h"
+
 
 ADXL313 Accelerometer::s_adxl;
 void Accelerometer::begin() {
-  if (s_adxl.beginSPI(ACCELEROMETER_CHIP_SELECT_PIN) == false) {
+  if (s_adxl.beginSPI(ACCEL_CS) == false) {
     Serial.println("Failed to detect ADXL313 Accelerometer");
     /* assert(false); */
   }

@@ -4,8 +4,6 @@
 #include <SparkFunADXL313.h>
 #include <cassert>
 
-constexpr uint8_t ACCELEROMETER_CHIP_SELECT_PIN = 10;
-
 class Accelerometer {
 public:
   static void begin();
