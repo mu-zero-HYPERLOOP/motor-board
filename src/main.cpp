@@ -4,6 +4,9 @@
 
 int main() {
 
+  Serial.begin(9600);
+  delay(5000);
+
   Accelerometer::begin();
 
   while (true) {
