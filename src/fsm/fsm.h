@@ -1,4 +1,4 @@
-#pragma 
+#pragma once
 
 void fsm_init();
 
