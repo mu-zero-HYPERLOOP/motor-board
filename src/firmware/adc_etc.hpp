@@ -53,10 +53,10 @@ enum AdcEtcTrigger:uint8_t {
 
 
 struct TrigChainInfo {
-  AdcEtcTrigger trig_num = TRIG0;
+  AdcEtcTrigger trig_num = TRIG0; // TRIG0 is at start of PWM cycle (VAL4), TRIG1 is at middle of PWM cycle (VAL5)
   int chain_length = 1;
   int* read_pins = nullptr;
-  bool trig_sync = false;
+  bool trig_sync = false; // only relevant for TRIG0-3
   int chain_priority = 0;
   bool software_trig = false;
   DoneInterrupt intr = NONE;

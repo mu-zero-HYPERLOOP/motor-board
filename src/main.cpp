@@ -92,7 +92,7 @@ int main() {
   chains[3].trig_sync = false; // <-- check me (maybe just try true as well)
   chains[3].intr = NONE;
 
-  AdcEtcBeginInfo adcBeginInfo = AdcEtcBeginInfo();
+  AdcEtcBeginInfo adcBeginInfo;
   adcBeginInfo.adc1_avg = HwAvg::SAMPLE_4;
   adcBeginInfo.adc1_clock_div = AdcClockDivider::NO_DIV;
   adcBeginInfo.adc1_high_speed = true;

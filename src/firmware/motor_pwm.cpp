@@ -109,7 +109,7 @@ void pwm_init() {
   // pwm synchronization, but iam not sure yet.
   // Enable triggers for submodule at val4 (TODO probably for ADC convertion)
   FLEXPWM4_SM0TCTRL = FLEXPWM_SMTCTRL_OUT_TRIG_EN(1 << 4);
-  // FLEXPWM4_SM1TCTRL = FLEXPWM_SMTCTRL_OUT_TRIG_EN(1 << 4);
+  // FLEXPWM4_SM0TCTRL |= FLEXPWM_SMTCTRL_OUT_TRIG_EN(1 << 5); // for second ADC conversion (TRIG1)
 
   // Enable reload Interrupt for PWM4_SM2
   // FLEXPWM4_SM2INTEN |= FLEXPWM_SMINTEN_CMPIE(1 << 4); // trigger at val 4
