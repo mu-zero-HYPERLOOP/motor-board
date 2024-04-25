@@ -9,6 +9,7 @@
 #include "pins_arduino.h"
 #include "wiring.h"
 #include <Arduino.h>
+#include "util/lina.h"
 
 /**
  * Talk to jakob about this example (He might now what PWM pins & ADC pins are
