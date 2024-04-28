@@ -1,14 +1,11 @@
 #include "core_pins.h"
-#include "firmware/Accelerometer.h"
 #include "firmware/adc_etc.hpp"
 #include "firmware/adc_mux.hpp"
+#include "firmware/motor_pwm.hpp"
 #include "firmware/pinout.h"
 #include "firmware/pwm.hpp"
 #include "firmware/xbar.hpp"
-#include "imxrt.h"
-#include "pins_arduino.h"
 #include "util/lina.h"
-#include "wiring.h"
 #include <Arduino.h>
 
 /**
@@ -30,6 +27,25 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   imeas_w1_0 = res.trig_res<4, 0>();
   imeas_v1_0 = res.trig_res<4, 1>();
   imeas_u1_0 = res.trig_res<4, 2>();
+
+  MotorPwmControl control;
+  control.V1_duty = 0.5f;
+  control.V2_duty = 0.5f;
+  control.U1_duty = 0.5f;
+  control.U2_duty = 0.5f;
+  control.W2_duty = 0.5f;
+  control.W1_duty = 0.5f;
+
+  // Both are equivalent! (works with implicit casts)
+  /* PwmControl control; */
+  /* control.duty13 = 0.5f; */
+  /* control.duty22 = 0.5f; */
+  /* control.duty20 = 0.5f; */
+  /* control.duty23 = 0.5f; */
+  /* control.duty31 = 0.5f; */
+  /* control.duty42 = 0.5f; */
+
+  pwm::control(control);
 }
 
 void adc_etc_done1_isr(AdcTrigRes res) {
@@ -56,7 +72,7 @@ int main() {
   beginInfo.enable_trig1_interrupt = false;
   beginInfo.enable_trig0_interrupt = false;
   beginInfo.trig0 = 0.0f; // trig0 raised at reload
-  //beginInfo.trig0 = 0.5f; // trig0 raised at center
+  // beginInfo.trig0 = 0.5f; // trig0 raised at center
   beginInfo.trig1 = std::nullopt;
   pwm::begin();
 
