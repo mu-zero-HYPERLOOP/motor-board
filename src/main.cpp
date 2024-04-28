@@ -1,15 +1,15 @@
 #include "core_pins.h"
+#include "firmware/Accelerometer.h"
 #include "firmware/adc_etc.hpp"
 #include "firmware/adc_mux.hpp"
-#include "firmware/motor_pwm.hpp"
 #include "firmware/pinout.h"
+#include "firmware/pwm.hpp"
 #include "firmware/xbar.hpp"
-#include "firmware/Accelerometer.h"
 #include "imxrt.h"
 #include "pins_arduino.h"
+#include "util/lina.h"
 #include "wiring.h"
 #include <Arduino.h>
-#include "util/lina.h"
 
 /**
  * Talk to jakob about this example (He might now what PWM pins & ADC pins are
@@ -21,7 +21,6 @@ volatile uint16_t imeas_w1_0, imeas_v1_0, imeas_u1_0;
 
 volatile uint16_t imeas_w2_180, imeas_v2_180, imeas_u2_180;
 volatile uint16_t imeas_w1_180, imeas_v1_180, imeas_u1_180;
-
 
 void adc_etc_done0_isr(AdcTrigRes res) {
   imeas_w2_0 = res.trig_res<0, 0>();
@@ -44,15 +43,22 @@ void adc_etc_done1_isr(AdcTrigRes res) {
   imeas_u1_180 = res.trig_res<5, 2>();
 }
 
-void control() {
-  
-}
+void control() {}
 
 int main() {
   Serial.begin(3000000);
   /* delay(5000); */
-  xbar_init();
-  pwm_init();
+  xbar::begin();
+  PwmBeginInfo beginInfo;
+  beginInfo.enable_outputs = false;
+  beginInfo.frequency = 20_kHz;
+  beginInfo.deadtime = 10_ns;
+  beginInfo.enable_trig1_interrupt = false;
+  beginInfo.enable_trig0_interrupt = false;
+  beginInfo.trig0 = 0.0f; // trig0 raised at reload
+  //beginInfo.trig0 = 0.5f; // trig0 raised at center
+  beginInfo.trig1 = std::nullopt;
+  pwm::begin();
 
   TrigChainInfo chains[4];
   // see xbar_init() for when this trig0 signal gets raised
@@ -105,6 +111,9 @@ int main() {
   adcBeginInfo.chains = chains;
   AdcEtc::begin(adcBeginInfo);
 
+  xbar::connect(pwm::TRIG0_SIGNAL_SOURCE, AdcEtc::TRIG0_SIGNAL_SINK);
+  xbar::connect(pwm::TRIG1_SIGNAL_SOURCE, AdcEtc::TRIG1_SIGNAL_SINK);
+
   /* Accelerometer::begin(); */
 
   while (true) {
@@ -118,13 +127,14 @@ int main() {
 
     /* const auto& [x,y,z] = Accelerometer::read_float_blocking(); */
 
-    for(int i = 0; i < 80; i++) {
+    for (int i = 0; i < 80; i++) {
       Serial.printf("\n");
     }
 
-
-    Serial.printf("========================================ADC=======================================\n");
-    Serial.printf("-------------------0°----------Current-Measurement-----------180°-----------------\n");
+    Serial.printf("========================================ADC================="
+                  "======================\n");
+    Serial.printf("-------------------0°----------Current-Measurement----------"
+                  "-180°-----------------\n");
     Serial.printf("i_meas_w1[%2u]=%-5u| i_meas_w2[%2u]=%-5u | "
                   "i_meas_w1[%2u]=%-5u| i_meas_w2[%2u]=%-5u\n",
                   (uint32_t)AIN_I_MEAS_W1, imeas_w1_0, (uint32_t)AIN_I_MEAS_W2,
@@ -137,14 +147,14 @@ int main() {
                   imeas_u2_0, (uint32_t)AIN_I_MEAS_U1, imeas_u1_180,
                   (uint32_t)AIN_I_MEAS_U2, imeas_u2_180);
 
-
     Serial.printf("i_meas_v1[%2u]=%-5u| i_meas_v2[%2u]=%-5u | "
                   "i_meas_v1[%2u]=%-5u| i_meas_v2[%2u]=%-5u\n",
                   (uint32_t)AIN_I_MEAS_V1, imeas_v1_0, (uint32_t)AIN_I_MEAS_V2,
                   imeas_v2_0, (uint32_t)AIN_I_MEAS_V1, imeas_v1_180,
                   (uint32_t)AIN_I_MEAS_V2, imeas_v2_180);
 
-    Serial.printf("------------------------------------Multiplexed-----------------------------------\n");
+    Serial.printf("------------------------------------Multiplexed-------------"
+                  "----------------------\n");
     for (uint8_t sel = 0; sel < 8; sel++) {
       uint16_t avalue = mux_readings[sel];
       Serial.printf("mux%u=%-16u", sel, avalue);
@@ -156,11 +166,13 @@ int main() {
       }
     }
     Serial.printf("\n");
-    /* Serial.printf("------------------------------------Accelerometer--------------------------------\n"); */
-    /* Serial.printf("accel_x = %u             accel_y = %u                  accel_z = %u\n", x,y,z); */
+    /* Serial.printf("------------------------------------Accelerometer--------------------------------\n");
+     */
+    /* Serial.printf("accel_x = %u             accel_y = %u accel_z = %u\n",
+     * x,y,z); */
     /*  */
-    Serial.println("==================================================================================");
-
+    Serial.println("==========================================================="
+                   "=======================");
 
     delay(50);
   }

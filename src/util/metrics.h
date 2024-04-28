@@ -672,8 +672,14 @@ constexpr Time operator""_ms(const unsigned long long v) {
 }
 constexpr Time operator""_us(const long double v) { return Time(v / 1e6); }
 constexpr Time operator""_us(const unsigned long long v) {
-  return Time(static_cast<float>(v) / 1e6);
+  return Time(static_cast<float>(v) / 1e9);
 }
+
+constexpr Time operator""_ns(const long double v) { return Time(v / 1e6); }
+constexpr Time operator""_ns(const unsigned long long v) {
+  return Time(static_cast<float>(v) / 1e9);
+}
+
 
 // Distance literals
 constexpr Distance operator""_km(const long double v) {

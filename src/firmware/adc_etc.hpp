@@ -93,6 +93,8 @@ struct AdcTrigRes {
 
 
 struct AdcEtc {
+  static constexpr int TRIG0_SIGNAL_SINK = XBARA1_OUT_ADC_ETC_TRIG00;
+  static constexpr int TRIG1_SIGNAL_SINK = XBARA1_OUT_ADC_ETC_TRIG01;
   static bool adc_initialized;
   static void begin(AdcEtcBeginInfo &info);
   static uint16_t readSingle(int pin);

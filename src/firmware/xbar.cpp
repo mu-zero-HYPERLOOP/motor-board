@@ -1,45 +1,36 @@
 #include "xbar.hpp"
 
-#include <imxrt.h>
 #include <cinttypes>
+#include <imxrt.h>
 
-void xbar_connect(unsigned int input, unsigned int output)
+
+void xbar::connect(unsigned int source, unsigned int sink)
 // from SciMo
 // from https://github.com/manitou48/teensy4/blob/master/pitxbaradc.ino
 {
-  if (input >= 88)
+  if (source >= 88)
     return;
-  if (output >= 132)
+  if (sink >= 132)
     return;
-  volatile uint16_t *xbar = &XBARA1_SEL0 + (output / 2);
+  volatile uint16_t *xbar = &XBARA1_SEL0 + (sink / 2);
   uint16_t val = *xbar;
-  if (!(output & 1))
-  {
-    val = (val & 0xFF00) | input;
-  }
-  else
-  {
-    val = (val & 0x00FF) | (input << 8);
+  if (!(sink & 1)) {
+    val = (val & 0xFF00) | source;
+  } else {
+    val = (val & 0x00FF) | (source << 8);
   }
   *xbar = val;
 }
 
-
-void xbar_init() {CCM_CCGR2 |= CCM_CCGR2_XBAR1(CCM_CCGR_ON);
+void xbar::begin() {
+  static bool init = false;
+  if (init) {
+    return;
+  }
   CCM_CCGR2 |= CCM_CCGR2_XBAR1(CCM_CCGR_ON);
-
-  // for some reason the PWM submodules in the XBAR inputs are labeled 1-4 instead of 0-3 like everywhere else
-  // so FLEXPWM4_PWM1 is submodule 0 of the flexpwm 4 module
-  xbar_connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_FLEXPWM1_PWM3_EXT_SYNC);
-  xbar_connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_FLEXPWM2_PWM0_EXT_SYNC); 
-  xbar_connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_FLEXPWM2_PWM2_EXT_SYNC); 
-  xbar_connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_FLEXPWM2_PWM3_EXT_SYNC); 
-  xbar_connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_FLEXPWM3_EXT_SYNC1);
-  xbar_connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_FLEXPWM4_EXT_SYNC2); 
-
-  // PWM -> ADC_ETC_TRIG0 
-  xbar_connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_ADC_ETC_TRIG00);
-  // TODO PWM -> ADC_ETC_TRIG1 (half period trigger)
-  xbar_connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG1, XBARA1_OUT_ADC_ETC_TRIG01);
-
+  init = true;
+  /* // PWM -> ADC_ETC_TRIG0 */
+  /* xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0, XBARA1_OUT_ADC_ETC_TRIG00); */
+  /* // TODO PWM -> ADC_ETC_TRIG1 (half period trigger) */
+  /* xbar::connect(XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG1, XBARA1_OUT_ADC_ETC_TRIG01); */
 }
