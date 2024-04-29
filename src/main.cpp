@@ -10,6 +10,7 @@
 #include "wiring.h"
 #include <Arduino.h>
 #include "util/lina.h"
+#include "util/metrics.h"
 
 /**
  * Talk to jakob about this example (He might now what PWM pins & ADC pins are
@@ -22,6 +23,13 @@ volatile uint16_t imeas_w1_0, imeas_v1_0, imeas_u1_0;
 volatile uint16_t imeas_w2_180, imeas_v2_180, imeas_u2_180;
 volatile uint16_t imeas_w1_180, imeas_v1_180, imeas_u1_180;
 
+constexpr float sqrt3over2 = 0.866025;
+
+// some values for testing
+constexpr Frequency my_pwm_freq = 20_kHz;
+constexpr Frequency rotational_freq = 15_Hz;
+constexpr float modulation_index = 0.85;
+
 
 void adc_etc_done0_isr(AdcTrigRes res) {
   imeas_w2_0 = res.trig_res<0, 0>();
@@ -31,6 +39,28 @@ void adc_etc_done0_isr(AdcTrigRes res) {
   imeas_w1_0 = res.trig_res<4, 0>();
   imeas_v1_0 = res.trig_res<4, 1>();
   imeas_u1_0 = res.trig_res<4, 2>();
+
+  pwm_control_t isr_control;
+
+  static float theta = 0;
+  theta += rotational_freq * TWO_PI / my_pwm_freq;
+  if(theta > TWO_PI) {
+    theta -= TWO_PI;
+  }
+
+  // complex pointer u_a + j*u_b
+  float u_a = modulation_index * cos(theta) * sqrt3over2 / 2;
+  float u_b = modulation_index * sin(theta) * sqrt3over2 / 2;
+
+  float u_u = u_a;
+  float u_v = -0.5 * u_a + sqrt3over2 * u_b;
+  float u_w = -0.5 * u_a - sqrt3over2 * u_b;
+
+  isr_control.U2_duty = 0.5 + u_u/1.0; 
+  isr_control.V2_duty = 0.5 + u_v/1.0; 
+  isr_control.W2_duty = 0.5 + u_w/1.0; 
+
+  pwm_set_control(isr_control);
 }
 
 void adc_etc_done1_isr(AdcTrigRes res) {
@@ -53,6 +83,11 @@ int main() {
   /* delay(5000); */
   xbar_init();
   pwm_init();
+  set_PWM_freq(static_cast<float>(my_pwm_freq));
+
+  pinMode(InverterPin::SDC_TRIG, OUTPUT);
+  pinMode(InverterPin::PRECHARGE_START, OUTPUT);
+  pinMode(InverterPin::PRECHARGE_DONE, OUTPUT);
 
   TrigChainInfo chains[4];
   // see xbar_init() for when this trig0 signal gets raised
@@ -104,6 +139,16 @@ int main() {
   adcBeginInfo.num_chains = sizeof(chains) / sizeof(TrigChainInfo);
   adcBeginInfo.chains = chains;
   AdcEtc::begin(adcBeginInfo);
+
+  digitalWrite(InverterPin::SDC_TRIG, HIGH);
+  delay(1000);
+  digitalWrite(InverterPin::PRECHARGE_START, HIGH);
+  delay(2000);
+  digitalWrite(InverterPin::PRECHARGE_DONE, HIGH);
+  delay(500);
+  digitalWrite(InverterPin::PRECHARGE_START, LOW);
+  delay(1000);
+  
 
   /* Accelerometer::begin(); */
 
@@ -162,6 +207,6 @@ int main() {
     Serial.println("==================================================================================");
 
 
-    delay(50);
+    delay(500);
   }
 }
