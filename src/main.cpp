@@ -27,8 +27,10 @@ constexpr float sqrt3over2 = 0.866025;
 
 // some values for testing
 constexpr Frequency my_pwm_freq = 20_kHz;
-constexpr Frequency rotational_freq = 15_Hz;
-constexpr float modulation_index = 0.85;
+volatile Frequency rotational_freq = 10_Hz;
+constexpr float modulation_index = 0.5;
+
+int main_counter = 0;
 
 
 void adc_etc_done0_isr(AdcTrigRes res) {
@@ -79,7 +81,7 @@ void control() {
 }
 
 int main() {
-  Serial.begin(3000000);
+  Serial.begin(9600);
   /* delay(5000); */
   xbar_init();
   pwm_init();
@@ -163,50 +165,16 @@ int main() {
 
     /* const auto& [x,y,z] = Accelerometer::read_float_blocking(); */
 
-    for(int i = 0; i < 80; i++) {
-      Serial.printf("\n");
+    // rotational_freq = rotational_freq + 0.5_Hz;
+    Serial.printf("freq: %f \n", static_cast<float>(rotational_freq));
+
+    if(main_counter > 100) {
+      // rotational_freq = 2_Hz;
+      main_counter = 0;
     }
 
+    main_counter++;
 
-    Serial.printf("========================================ADC=======================================\n");
-    Serial.printf("-------------------0°----------Current-Measurement-----------180°-----------------\n");
-    Serial.printf("i_meas_w1[%2u]=%-5u| i_meas_w2[%2u]=%-5u | "
-                  "i_meas_w1[%2u]=%-5u| i_meas_w2[%2u]=%-5u\n",
-                  (uint32_t)AIN_I_MEAS_W1, imeas_w1_0, (uint32_t)AIN_I_MEAS_W2,
-                  imeas_w2_0, (uint32_t)AIN_I_MEAS_W1, imeas_w1_180,
-                  (uint32_t)AIN_I_MEAS_W2, imeas_w2_180);
-
-    Serial.printf("i_meas_u1[%2u]=%-5u| i_meas_u2[%2u]=%-5u | "
-                  "i_meas_u1[%2u]=%-5u| i_meas_u2[%2u]=%-5u\n",
-                  (uint32_t)AIN_I_MEAS_U1, imeas_u1_0, (uint32_t)AIN_I_MEAS_U2,
-                  imeas_u2_0, (uint32_t)AIN_I_MEAS_U1, imeas_u1_180,
-                  (uint32_t)AIN_I_MEAS_U2, imeas_u2_180);
-
-
-    Serial.printf("i_meas_v1[%2u]=%-5u| i_meas_v2[%2u]=%-5u | "
-                  "i_meas_v1[%2u]=%-5u| i_meas_v2[%2u]=%-5u\n",
-                  (uint32_t)AIN_I_MEAS_V1, imeas_v1_0, (uint32_t)AIN_I_MEAS_V2,
-                  imeas_v2_0, (uint32_t)AIN_I_MEAS_V1, imeas_v1_180,
-                  (uint32_t)AIN_I_MEAS_V2, imeas_v2_180);
-
-    Serial.printf("------------------------------------Multiplexed-----------------------------------\n");
-    for (uint8_t sel = 0; sel < 8; sel++) {
-      uint16_t avalue = mux_readings[sel];
-      Serial.printf("mux%u=%-16u", sel, avalue);
-      if (sel == 1 || sel == 5) {
-        Serial.print(" ");
-      }
-      if (sel == 3) {
-        Serial.printf("\n");
-      }
-    }
-    Serial.printf("\n");
-    /* Serial.printf("------------------------------------Accelerometer--------------------------------\n"); */
-    /* Serial.printf("accel_x = %u             accel_y = %u                  accel_z = %u\n", x,y,z); */
-    /*  */
-    Serial.println("==================================================================================");
-
-
-    delay(500);
+    delay(100);
   }
 }
