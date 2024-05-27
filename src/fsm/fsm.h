@@ -1,5 +1,10 @@
 #pragma once
 
-void fsm_init();
+namespace fsm {
 
-void fsm_next();
+void begin();
+
+void update();
+
+};
+

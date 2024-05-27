@@ -1,3 +1,4 @@
+#include "fsm/fsm.h"
 #include "canzero/canzero.h"
 
 #include "fsm/error_handling.h"
@@ -6,12 +7,12 @@
 
 Timestamp g_fsm_last_transition = Timestamp::now();
 
-void fsm_init() {
+void fsm::begin() {
   g_fsm_last_transition = Timestamp::now();
   canzero_set_state(motor_state_INIT);
 }
 
-void fsm_next() {
+void fsm::update() {
     Timestamp now = Timestamp::now();
     Duration time_since_last_transition = now - g_fsm_last_transition;
 
@@ -33,14 +34,14 @@ void fsm_next() {
         case motor_state_READY:
             next_state = ready_state_next(cmd, time_since_last_transition);
             break;
-        case motor_state_START:
-            next_state = start_state_next(cmd, time_since_last_transition);
+        case motor_state_ACCELERATE:
+            next_state = accelerate_state_next(cmd, time_since_last_transition);
             break;
         case motor_state_CONTROL:
             next_state = control_state_next(cmd, time_since_last_transition);
             break;
-        case motor_state_STOP:
-            next_state = stop_state_next(cmd, time_since_last_transition);
+        case motor_state_DECELERATE:
+            next_state = decelerate_state_next(cmd, time_since_last_transition);
             break;
         case motor_state_MANUAL:
             next_state = manual_state_next(cmd, time_since_last_transition);

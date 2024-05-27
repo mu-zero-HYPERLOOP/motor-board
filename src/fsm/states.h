@@ -11,11 +11,11 @@ motor_state precharge_state_next(motor_command cmd, Duration time_since_last_tra
 
 motor_state ready_state_next(motor_command cmd, Duration time_since_last_transition);
 
-motor_state start_state_next(motor_command cmd, Duration time_since_last_transition);
+motor_state accelerate_state_next(motor_command cmd, Duration time_since_last_transition);
 
 motor_state control_state_next(motor_command cmd, Duration time_since_last_transition);
 
-motor_state stop_state_next(motor_command cmd, Duration time_since_last_transition);
+motor_state decelerate_state_next(motor_command cmd, Duration time_since_last_transition);
 
 motor_state manual_state_next(motor_command cmd, Duration time_since_last_transition);
 

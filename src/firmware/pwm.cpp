@@ -1,5 +1,6 @@
 #include "pwm.hpp"
 
+#include "imxrt.h"
 #include "core_pins.h"
 #include "xbar.hpp"
 
@@ -617,3 +618,6 @@ std::optional<float> pwm::m_trig0;
 std::optional<float> pwm::m_trig1;
 volatile uint32_t pwm::m_pwm_cycles;
 volatile uint32_t pwm::m_deadtime_cycles;
+
+int pwm::TRIG0_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0;
+int pwm::TRIG1_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG1;

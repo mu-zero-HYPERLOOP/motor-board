@@ -1,13 +1,14 @@
-
+#pragma once
 
 #include "firmware/pwm.hpp"
+
 struct MotorPwmControl {
-  float U1_duty; // range [0,1]
-  float V2_duty;
-  float U2_duty;
-  float W2_duty;
-  float W1_duty;
-  float V1_duty;
+  float U1_duty = 0.5; // range [0,1]
+  float V2_duty = 0.5;
+  float U2_duty = 0.5;
+  float W2_duty = 0.5;
+  float W1_duty = 0.5;
+  float V1_duty = 0.5;
   constexpr operator PwmControl() const {
     return PwmControl{.duty20 = U1_duty,
                       .duty22 = V2_duty,

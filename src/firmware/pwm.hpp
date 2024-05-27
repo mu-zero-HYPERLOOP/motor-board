@@ -1,10 +1,8 @@
 #pragma once
 
-#include "imxrt.h"
 #include "util/metrics.h"
 #include "util/timestamp.h"
 #include <cstdint>
-#include <functional>
 #include <optional>
 
 static constexpr bool ENABLE_PWM2_SM0 = true;
@@ -36,8 +34,8 @@ struct PwmBeginInfo {
 
 struct pwm {
 public:
-  static constexpr int TRIG0_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG0;
-  static constexpr int TRIG1_SIGNAL_SOURCE = XBARA1_IN_FLEXPWM4_PWM1_OUT_TRIG1;
+  static int TRIG0_SIGNAL_SOURCE;
+  static int TRIG1_SIGNAL_SOURCE;
 
   static void begin(const PwmBeginInfo &beginInfo = PwmBeginInfo());
 
