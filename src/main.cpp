@@ -95,7 +95,5 @@ int main() {
     canzero_set_loop_frequency(static_cast<float>(mainLoopIntervalTimer.frequency()) / 1e3);
 
     canzero_update_continue(canzero_get_time());
-
-    Serial.println("here");
   }
 }
