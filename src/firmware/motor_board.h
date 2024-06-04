@@ -1,28 +1,21 @@
 #pragma once
 
-#include "firmware/adc_etc.hpp"
+#include "firmware/adc_etc.h"
 #include "firmware/pinout.h"
-#include "firmware/pwm.hpp"
+#include "firmware/pwm.h"
 #include "util/metrics.h"
 #include "util/timestamp.h"
 #include <cstdint>
 #include <tuple>
 namespace motor_board {
 
-struct BeginInfo {
-  PwmBeginInfo pwmBeginInfo;
-  AdcEtcBeginInfo adcBeginInfo;
-};
-
-void begin(const BeginInfo& beginInfo);
+void begin();
 
 Voltage sync_read(ain_pin pin);
 
 Voltage sync_read(mux_pin pin);
 
 Temperature read_mcu_temperature();
-
-void set_sdc(bool close);
 
 void mux_select(uint8_t sel);
 
@@ -82,6 +75,6 @@ private:
   bool m_acquired;
 };
 
-void update_continue();
+void update();
 
 } // namespace motor_board

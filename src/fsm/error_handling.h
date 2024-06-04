@@ -1,6 +1,8 @@
 #pragma once
 
 #include "canzero/canzero.h"
-#include "util/timestamp.h"
+namespace fsm::error_handling {
 
-motor_command handle_errors(motor_state state, motor_command cmd, Duration time_since_last_transition);
+motor_command approve(motor_command cmd);
+
+} // namespace fsm::error_handling

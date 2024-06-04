@@ -1,10 +1,11 @@
 #include "firmware/motor_board.h"
 #include "InternalTemperature.h"
 #include "core_pins.h"
-#include "firmware/adc_etc.hpp"
+#include "firmware/adc_etc.h"
 #include "firmware/ain_scheduler.h"
 #include "firmware/mux_scheduler.h"
-#include "firmware/xbar.hpp"
+#include "firmware/xbar.h"
+#include <tuple>
 #include "util/periodic_scheduler.h"
 #include <SparkFunADXL313.h>
 
@@ -14,13 +15,14 @@ constexpr size_t MAX_MUX_PERIODIC_JOBS = 8;
 static AinScheduler<MAX_AIN_PERIODIC_JOBS> ain_scheduler;
 static MuxScheduler<MAX_MUX_PERIODIC_JOBS> mux_scheduler;
 
-void FLASHMEM motor_board::begin(const BeginInfo &beginInfo) {
+void FLASHMEM motor_board::begin() {
   xbar::begin();
-  pwm::begin(beginInfo.pwmBeginInfo);
-  adc_etc::begin(beginInfo.adcBeginInfo);
-
-  xbar::connect(pwm::TRIG0_SIGNAL_SOURCE, adc_etc::TRIG0_SIGNAL_SINK);
-  xbar::connect(pwm::TRIG1_SIGNAL_SOURCE, adc_etc::TRIG1_SIGNAL_SINK);
+  pinMode(static_cast<uint8_t>(ctrl_pin::sdc_trig), OUTPUT);
+  digitalWrite(static_cast<uint8_t>(ctrl_pin::sdc_trig), false);
+  pinMode(static_cast<uint8_t>(ctrl_pin::precharge_start), OUTPUT);
+  digitalWrite(static_cast<uint8_t>(ctrl_pin::precharge_start), false);
+  pinMode(static_cast<uint8_t>(ctrl_pin::precharge_done), OUTPUT);
+  digitalWrite(static_cast<uint8_t>(ctrl_pin::precharge_done), false);
 }
 
 Voltage FASTRUN motor_board::sync_read(ain_pin pin) {
@@ -37,10 +39,6 @@ Temperature motor_board::read_mcu_temperature() {
   return Temperature(temp_kelvin);
 }
 
-void FASTRUN motor_board::set_sdc(bool close) {
-  digitalWrite(ctrl_pin::sdc_trig, close);
-}
-
 void FASTRUN motor_board::mux_select(uint8_t sel) {
   digitalWrite(mux_sel0, sel & 0x1);
   digitalWrite(mux_sel1, sel & 0x2);
@@ -55,7 +53,7 @@ bool motor_board::register_periodic_reading(
                                         });
 }
 
-bool motor_board::register_periodic_reading(
+bool FLASHMEM motor_board::register_periodic_reading(
     const Time &period, mux_pin pin, void (*on_value)(const Voltage &v)) {
   return mux_scheduler.register_periodic(period, pin, on_value);
 }
@@ -100,7 +98,7 @@ std::tuple<Acceleration, Acceleration, Acceleration>
                          (adxl.z / RESOLUTION) * G);
 }
 
-void FASTRUN motor_board::update_continue() {
+void FASTRUN motor_board::update() {
 
   mux_scheduler.update_continue();
   ain_scheduler.update_continue();

@@ -1,7 +1,7 @@
-#include "adc_etc.hpp"
+#include "adc_etc.h"
 #include "analog.c"
 #include "imxrt.h"
-#include "usb_serial.h"
+#include <Arduino.h>
 
 #define PRREG(x)                                                               \
   Serial.print(#x " 0x");                                                      \
@@ -20,21 +20,6 @@ int adc_etc::TRIG1_SIGNAL_SINK = XBARA1_OUT_ADC_ETC_TRIG01;
 
 __attribute__((weak)) void adc_etc_done0_isr(AdcTrigRes res) {
   Serial.println("ADC ETC DONE0 interrupt triggered:");
-  Serial.print(res.trig_res(0, 0));
-  Serial.print("\t");
-  Serial.print(res.trig_res(0, 1));
-  Serial.print("\t");
-  Serial.print(res.trig_res(0, 2));
-  Serial.print("\t");
-  Serial.print(res.trig_res(0, 3));
-  Serial.print("\t");
-  Serial.print(res.trig_res(0, 4));
-  Serial.print("\t");
-  Serial.print(res.trig_res(0, 5));
-  Serial.print("\t");
-  Serial.print(res.trig_res(0, 6));
-  Serial.print("\t");
-  Serial.println(res.trig_res(0, 7));
 }
 void adc_etc_0_isr() {
   ADC_ETC_DONE0_1_IRQ |= done0_triggers;
@@ -192,7 +177,7 @@ void adc_etc::begin(const AdcEtcBeginInfo &info) {
                                        : DoneInterrupt::NONE);
         // enable done interrupt only for last segment
         *chain_base |= ADC_ETC_TRIG_CHAIN_CSEL1(
-            pin_to_channel[info.chains[chain].read_pins[segm]]);
+            pin_to_channel[static_cast<uint8_t>(info.chains[chain].read_pins[segm])]);
         // select read channel
         // trigger 0-3 read from adc1, trigger 4-7 read from adc2
       } else {
@@ -202,7 +187,7 @@ void adc_etc::begin(const AdcEtcBeginInfo &info) {
                                        : DoneInterrupt::NONE);
         // enable done interrupt only for last segment
         *chain_base |= ADC_ETC_TRIG_CHAIN_CSEL0(
-            pin_to_channel[info.chains[chain].read_pins[segm]]);
+            pin_to_channel[static_cast<uint8_t>(info.chains[chain].read_pins[segm])]);
         // select read channel
       }
       *chain_base |= ADC_ETC_TRIG_CHAIN_B2B1 | ADC_ETC_TRIG_CHAIN_B2B0;
@@ -214,17 +199,17 @@ void adc_etc::begin(const AdcEtcBeginInfo &info) {
     }
     switch (info.chains[chain].intr) {
     case DoneInterrupt::DONE0:
-      done0_triggers |= 1 << static_cast<int>(info.chains[chain].trig_num);
+      done0_triggers |= 1 << static_cast<uint8_t>(info.chains[chain].trig_num);
       attachInterruptVector(IRQ_ADC_ETC0, adc_etc_0_isr);
       NVIC_ENABLE_IRQ(IRQ_ADC_ETC0);
       break;
     case DoneInterrupt::DONE1:
-      done1_triggers |= 1 << static_cast<int>(info.chains[chain].trig_num);
+      done1_triggers |= 1 << static_cast<uint8_t>(info.chains[chain].trig_num);
       attachInterruptVector(IRQ_ADC_ETC1, adc_etc_1_isr);
       NVIC_ENABLE_IRQ(IRQ_ADC_ETC1);
       break;
     case DoneInterrupt::DONE2:
-      done2_triggers |= 1 << static_cast<int>(info.chains[chain].trig_num);
+      done2_triggers |= 1 << static_cast<uint8_t>(info.chains[chain].trig_num);
       attachInterruptVector(IRQ_ADC_ETC2, adc_etc_2_isr);
       NVIC_ENABLE_IRQ(IRQ_ADC_ETC2);
       break;
@@ -243,7 +228,7 @@ Voltage adc_etc::read_single(ain_pin pin) {
     Serial.println("adc not initlialized");
     return 0_V;
   }
-  uint8_t ch = pin_to_channel[pin];
+  uint8_t ch = pin_to_channel[static_cast<uint8_t>(pin)];
   if (!(ch & 0x80)) { // use adc1
     ADC1_HC3 = ADC_HC_ADCH(16);
 
@@ -291,12 +276,13 @@ Voltage adc_etc::read_single(ain_pin pin) {
   }
 }
 
-uint16_t AdcTrigRes::trig_res(int trig, int segment) {
+Voltage AdcTrigRes::trig_res(AdcEtcTrigger trig, int segment) {
+  float max_value = trig < 4 ? max_adc1_value : max_adc2_value;
   volatile uint32_t *result_base =
       &IMXRT_ADC_ETC.TRIG[trig].RESULT_1_0 + (segment / 2);
   if (segment % 2) {
-    return (*result_base >> 16) & 0xfff;
+    return ((*result_base >> 16) & 0xfff) * 3.3_V / max_value;
   } else {
-    return *result_base & 0xfff;
+    return (*result_base & 0xfff) * 3.3_V / max_value;
   }
 }

@@ -1,4 +1,4 @@
-#include "./tcpcan.h"
+#include "tcpcan.h"
 #include <cassert>
 #include <chrono>
 #include <condition_variable>

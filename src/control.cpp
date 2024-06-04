@@ -1,29 +1,55 @@
 #include "control.h"
 #include "firmware/motor_pwm.h"
+#include "util/lina.h"
+#include <cmath>
+#include <complex>
 
-PwmBeginInfo control::begin() {
-  PwmBeginInfo pwmBeginInfo;
-  pwmBeginInfo.enable_outputs = false;
-  pwmBeginInfo.frequency = 20_kHz;
-  pwmBeginInfo.deadtime = 10_ns;
-  // the control loops gets called from the adc_etc isr not the pwm reload isr.
-  pwmBeginInfo.enable_trig1_interrupt = false;
-  pwmBeginInfo.enable_trig0_interrupt = false;
-  // the triggers are forwarded to the adc_etc (see firmware)
-  pwmBeginInfo.trig0 = 0.0f; // trig0 raised at reload
-  pwmBeginInfo.trig1 = std::nullopt;
-  return pwmBeginInfo;
+void control::begin() {
 }
+
+
+
+static Frequency rotational_frequency = 10_Hz;
+static float modulation_index = 0.01;
+
+static float theta = 0.0f;
+
+constexpr float TWO_PI = M_PI * 2.0f;
+static float sqrt3over2 = std::sqrt(3.0f) / 2.0f;
 
 MotorPwmControl control::control_loop(Current current_w2, Current current_v2,
                                       Current current_u2, Current current_w1,
                                       Current current_v1, Current current_u1) {
+  
+  theta += rotational_frequency * TWO_PI / pwm::frequency();
+  while (theta >= TWO_PI){
+    theta -= TWO_PI;
+  }
+  while(theta < 0){
+    theta += TWO_PI;
+  }
+
+  const complex u = complex::from_polar(modulation_index * sqrt3over2 / 2.0f, theta);
+
+  // Clark transformation
+  float u_u = u.r();
+  float u_v = -0.5 * u.r() + sqrt3over2 * u.im();
+  float u_w = -0.5 * u.r() - sqrt3over2 * u.im();
+  
+  float control_u1 = 0.5 + u_u / 2.0f;
+  float control_v1 = 0.5 + u_v / 2.0f;
+  float control_w1 = 0.5 + u_w / 2.0f;
+
   MotorPwmControl control;
-  control.W1_duty = 0.5;
+  control.U1_duty = control_u1;
+  control.V1_duty = control_v1;
+  control.W1_duty = control_w1;
   control.W2_duty = 0.5;
-  control.V1_duty = 0.5;
   control.V2_duty = 0.5;
-  control.U1_duty = 0.5;
   control.U2_duty = 0.5;
   return control;
+}
+
+void control::update(){
+
 }

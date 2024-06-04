@@ -11,24 +11,34 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(${PROJECT_NAME} 
-  mock/main.cpp
+  mock/firmware/adc_etc.cpp
+  mock/firmware/motor_board.cpp
+  mock/firmware/pwm.cpp
+  mock/firmware/xbar.cpp
   mock/can.cpp
-  mock/sdc.cpp
-  mock/pwm.cpp
+  mock/print.cpp
   src/canzero/canzero.cpp
-  src/fsm/control_state.cpp
+  src/fsm/states/arming45.cpp
+  src/fsm/states/control.cpp
+  src/fsm/states/idle.cpp
+  src/fsm/states/init.cpp
+  src/fsm/states/precharge.cpp
+  src/fsm/states/ready.cpp
+  src/fsm/states/disarming45.cpp
   src/fsm/error_handling.cpp
-  src/fsm/error_state.cpp
   src/fsm/fsm.cpp
-  src/fsm/idle_state.cpp
-  src/fsm/init_state.cpp
-  src/fsm/manual_state.cpp
-  src/fsm/precharge_state.cpp
-  src/fsm/ready_state.cpp
-  src/fsm/accelerate_state.cpp
-  src/fsm/decelerate_state.cpp
+  src/sensors/accelerometer.cpp
+  src/sensors/ext_ntcs.cpp
+  src/sensors/mcu_temperature.cpp
+  src/sensors/on_board_ntcs.cpp
+  src/sensors/phase_current.cpp
+  src/sensors/vdc.cpp
+  src/adc_isr.cpp
+  src/control.cpp
+  src/main.cpp
+  src/sdc_brake.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
-  PRIVATE src/)
+  PRIVATE src/ mock/)
 

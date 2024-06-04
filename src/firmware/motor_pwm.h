@@ -1,6 +1,6 @@
 #pragma once
 
-#include "firmware/pwm.hpp"
+#include "firmware/pwm.h"
 
 struct MotorPwmControl {
   float U1_duty = 0.5; // range [0,1]

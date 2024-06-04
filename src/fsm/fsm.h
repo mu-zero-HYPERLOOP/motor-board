@@ -1,10 +1,12 @@
 #pragma once
 
-namespace fsm {
+namespace fsm{
 
 void begin();
 
+void finish_init();
+
 void update();
 
-};
+}
 

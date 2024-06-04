@@ -81,7 +81,7 @@ struct AdcEtcBeginInfo {
 
 struct AdcTrigRes {
   // get result of conversion for trigger T in chain segment S
-  static uint16_t trig_res(int trig, int segment);
+  Voltage trig_res(AdcEtcTrigger trig, int segment);
 };
 
 namespace adc_etc {

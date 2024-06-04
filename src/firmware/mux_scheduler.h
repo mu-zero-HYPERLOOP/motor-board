@@ -2,6 +2,7 @@
 #include "firmware/motor_board.h"
 #include "firmware/pinout.h"
 #include "util/heap.h"
+#include "print.h"
 #include "util/metrics.h"
 #include "util/pool_allocator.h"
 #include <chrono>

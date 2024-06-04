@@ -1,6 +1,6 @@
 #pragma once
 
-#include "util/ema.hpp"
+#include "util/ema.h"
 #include "util/metrics.h"
 #include "util/timestamp.h"
 
@@ -14,22 +14,33 @@ private:
 };
 
 struct IntervalTiming {
-  inline IntervalTiming(float alpha = 0.5) : m_last(Timestamp::now()), m_ema(alpha, 0_s) {}
+  inline IntervalTiming(float alpha = 0.5)
+      : m_last(Timestamp::now()), m_ema(alpha, 0_s) {}
 
   auto tick() -> void {
     const auto now = Timestamp::now();
     Duration time_since_last_tick = now - m_last;
     m_last = now;
-    m_ema.push(static_cast<Time>(static_cast<float>(time_since_last_tick.as_us()) / 1e6));
+    m_ema.push(static_cast<Time>(
+        static_cast<float>(time_since_last_tick.as_us()) / 1e6));
   }
 
   auto tick() volatile -> void {
-    const auto now = Timestamp::now();
+    const volatile auto now = Timestamp::now();
     Duration time_since_last_tick = now - m_last;
     m_last = now;
-    m_ema.push(static_cast<Time>(static_cast<float>(time_since_last_tick.as_us()) / 1e6));
+    m_ema.push(static_cast<Time>(
+        static_cast<float>(time_since_last_tick.as_us()) / 1e6));
   }
 
+  void reset() {
+    const auto now = Timestamp::now();
+    m_last = now;
+  }
+  void reset() volatile {
+    const volatile auto now = Timestamp::now();
+    m_last = now;
+  }
 
   auto frequency() -> Frequency { return 1.0f / m_ema.get(); };
 
