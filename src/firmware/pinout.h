@@ -30,5 +30,6 @@ enum InverterPin : uint8_t {
   AIN_I_MEAS_U2 = 17,
   AIN_I_MEAS_U1 = 16,
   AIN_I_MEAS_V1 = 15,
-  AIN_I_MEAS_W1 = 14
+  AIN_I_MEAS_W1 = 14,
+  AIN_I_MEAS_BAT
 };

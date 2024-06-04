@@ -19,6 +19,8 @@
 
 volatile uint16_t imeas_w2_0, imeas_v2_0, imeas_u2_0;
 volatile uint16_t imeas_w1_0, imeas_v1_0, imeas_u1_0;
+volatile float imeas_bat;
+bool error_flag = false;
 
 volatile uint16_t imeas_w2_180, imeas_v2_180, imeas_u2_180;
 volatile uint16_t imeas_w1_180, imeas_v1_180, imeas_u1_180;
@@ -27,42 +29,56 @@ constexpr float sqrt3over2 = 0.866025;
 
 // some values for testing
 constexpr Frequency my_pwm_freq = 20_kHz;
-volatile Frequency rotational_freq = 10_Hz;
-constexpr float modulation_index = 0.5;
+volatile Frequency rotational_freq = 16_Hz;
+float modulation_index = 0.5;
 
 int main_counter = 0;
 
 
 void adc_etc_done0_isr(AdcTrigRes res) {
-  imeas_w2_0 = res.trig_res<0, 0>();
-  imeas_v2_0 = res.trig_res<0, 1>();
-  imeas_u2_0 = res.trig_res<0, 2>();
-
-  imeas_w1_0 = res.trig_res<4, 0>();
-  imeas_v1_0 = res.trig_res<4, 1>();
-  imeas_u1_0 = res.trig_res<4, 2>();
-
-  pwm_control_t isr_control;
-
-  static float theta = 0;
-  theta += rotational_freq * TWO_PI / my_pwm_freq;
-  if(theta > TWO_PI) {
-    theta -= TWO_PI;
+  if(modulation_index > 0.5) {
+    modulation_index = 0;
   }
+  if(!error_flag) {
+    imeas_w2_0 = res.trig_res<0, 0>();
+    imeas_v2_0 = res.trig_res<0, 1>();
+    imeas_u2_0 = res.trig_res<0, 2>();
 
-  // complex pointer u_a + j*u_b
-  float u_a = modulation_index * cos(theta) * sqrt3over2 / 2;
-  float u_b = modulation_index * sin(theta) * sqrt3over2 / 2;
+    imeas_w1_0 = res.trig_res<4, 0>();
+    imeas_v1_0 = res.trig_res<4, 1>();
+    imeas_u1_0 = res.trig_res<4, 2>();
 
-  float u_u = u_a;
-  float u_v = -0.5 * u_a + sqrt3over2 * u_b;
-  float u_w = -0.5 * u_a - sqrt3over2 * u_b;
+    imeas_bat = 0.99 * imeas_bat + 0.01 * ((3.3 * res.trig_res<4,3>() / 4096.0 / 1.5 / 0.4 - 2.5) / 50 / 0.0001 + 2);
 
-  isr_control.U2_duty = 0.5 + u_u/1.0; 
-  isr_control.V2_duty = 0.5 + u_v/1.0; 
-  isr_control.W2_duty = 0.5 + u_w/1.0; 
+    pwm_control_t isr_control;
 
-  pwm_set_control(isr_control);
+    static float theta = 0;
+    theta += rotational_freq * TWO_PI / my_pwm_freq;
+    if(theta > TWO_PI) {
+      theta -= TWO_PI;
+    }
+
+    // complex pointer u_a + j*u_b
+    float u_a = modulation_index * cos(theta) * sqrt3over2 / 2;
+    float u_b = modulation_index * sin(theta) * sqrt3over2 / 2;
+
+    float u_u = u_a;
+    float u_v = -0.5 * u_a + sqrt3over2 * u_b;
+    float u_w = -0.5 * u_a - sqrt3over2 * u_b;
+    if(false) {
+      isr_control.U1_duty = 0;
+      isr_control.V1_duty = 0;
+      isr_control.W1_duty = 0;
+      error_flag = true;
+
+    } else {
+      isr_control.U1_duty = 0.5 + u_u/1.0; 
+      isr_control.V1_duty = 0.5 + u_v/1.0; 
+      isr_control.W1_duty = 0.5 + u_w/1.0; 
+    }
+
+    pwm_set_control(isr_control);
+  }
 }
 
 void adc_etc_done1_isr(AdcTrigRes res) {
@@ -103,7 +119,7 @@ int main() {
   chains[0].intr = DONE0;
 
   chains[1].trig_num = TRIG4;
-  int chain2_pins[3] = {AIN_I_MEAS_W1, AIN_I_MEAS_V1, AIN_I_MEAS_U1};
+  int chain2_pins[4] = {AIN_I_MEAS_W1, AIN_I_MEAS_V1, AIN_I_MEAS_U1, AIN_I_MEAS_BAT};
   chains[1].chain_length = sizeof(chain2_pins) / sizeof(int);
   chains[1].read_pins = chain2_pins;
   chains[1].chain_priority = 0;
@@ -142,6 +158,11 @@ int main() {
   adcBeginInfo.chains = chains;
   AdcEtc::begin(adcBeginInfo);
 
+
+  delay(5000);
+  Serial.println("Activate 45V");
+  delay(5000);
+
   digitalWrite(InverterPin::SDC_TRIG, HIGH);
   delay(1000);
   digitalWrite(InverterPin::PRECHARGE_START, HIGH);
@@ -166,7 +187,7 @@ int main() {
     /* const auto& [x,y,z] = Accelerometer::read_float_blocking(); */
 
     // rotational_freq = rotational_freq + 0.5_Hz;
-    Serial.printf("freq: %f \n", static_cast<float>(rotational_freq));
+    Serial.printf("freq: %f  -  i_bat: %f \n", static_cast<float>(rotational_freq), imeas_bat);
 
     if(main_counter > 100) {
       // rotational_freq = 2_Hz;
