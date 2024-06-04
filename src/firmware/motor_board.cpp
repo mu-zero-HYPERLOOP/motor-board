@@ -9,7 +9,7 @@
 #include "util/periodic_scheduler.h"
 #include <SparkFunADXL313.h>
 
-constexpr size_t MAX_AIN_PERIODIC_JOBS = 2;
+constexpr size_t MAX_AIN_PERIODIC_JOBS = 10;
 constexpr size_t MAX_MUX_PERIODIC_JOBS = 8;
 
 static AinScheduler<MAX_AIN_PERIODIC_JOBS> ain_scheduler;

@@ -173,22 +173,22 @@ void sensors::phase_current::calibrate() {
 }
 
 Current sensors::phase_current::convert_v1(Voltage v) {
-  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN);
+  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN, 0.2_mOhm);
 }
 Current sensors::phase_current::convert_w1(Voltage v) {
-  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN);
+  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN, 0.2_mOhm);
 }
 Current sensors::phase_current::convert_u1(Voltage v) {
-  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN);
+  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN, 0.2_mOhm);
 }
 Current sensors::phase_current::convert_v2(Voltage v) {
-  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN);
+  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN, 0.2_mOhm);
 }
 Current sensors::phase_current::convert_w2(Voltage v) {
-  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN);
+  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN, 0.2_mOhm);
 }
 Current sensors::phase_current::convert_u2(Voltage v) {
-  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN);
+  return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN, 0.2_mOhm);
 }
 
 void sensors::phase_current::update() {

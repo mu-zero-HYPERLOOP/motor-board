@@ -22,17 +22,25 @@
 #include "xbar_config.h"
 #include "util/timing.h"
 #include "print.h"
+#include <Arduino.h>
 
 
 static IntervalTiming mainLoopIntervalTimer;
 
 int main() {
+  motor_board::delay(4_s);
+  Serial.println("here");
   canzero_init();
+  
+  Serial.println("here2");
 
   fsm::begin();
   canzero_update_continue(canzero_get_time());
+  Serial.println("here3");
 
   motor_board::begin();
+  
+  Serial.println("here4");
   pwm_config();
   adc_config();
   xbar_config();
@@ -88,5 +96,6 @@ int main() {
 
     canzero_update_continue(canzero_get_time());
 
+    Serial.println("here");
   }
 }
