@@ -16,7 +16,7 @@ motor_state fsm::states::precharge(motor_command cmd,
     return motor_state_DISARMING45;
   }
 
-  if (time_since_last_transition > MAX_PRECHARGE_TIME){
+  if (time_since_last_transition > MAX_PRECHARGE_TIME) {
     return motor_state_DISARMING45;
   }
 

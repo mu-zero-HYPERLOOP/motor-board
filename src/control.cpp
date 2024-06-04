@@ -3,6 +3,7 @@
 #include "util/lina.h"
 #include <cmath>
 #include <complex>
+#include "canzero/canzero.h"
 
 void control::begin() {
 }
@@ -22,10 +23,10 @@ MotorPwmControl control::control_loop(Current current_w2, Current current_v2,
                                       Current current_v1, Current current_u1) {
   
   theta += rotational_frequency * TWO_PI / pwm::frequency();
-  while (theta >= TWO_PI){
+  while (theta >= TWO_PI) {
     theta -= TWO_PI;
   }
-  while(theta < 0){
+  while(theta < 0) {
     theta += TWO_PI;
   }
 
@@ -50,6 +51,6 @@ MotorPwmControl control::control_loop(Current current_w2, Current current_v2,
   return control;
 }
 
-void control::update(){
-
+void control::update() {
+  // rotational_frequency = Frequency(canzero_get_frequency());
 }

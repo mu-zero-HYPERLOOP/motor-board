@@ -16,6 +16,8 @@ motor_state fsm::states::ready(motor_command cmd,
     return motor_state_CONTROL;
   }
 
+  
+  pwm::control(PwmControl());
   pwm::enable_output();
   pwm::disable_trig0();
   pwm::disable_trig1();

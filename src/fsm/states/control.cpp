@@ -7,11 +7,11 @@
 
 motor_state fsm::states::control(motor_command cmd, Duration time_since_last_transition){
   
-  if (motor_command_DISARM45 == cmd){
+  if (motor_command_DISARM45 == cmd) {
     return motor_state_DISARMING45;
   }
 
-  if (motor_command_STOP == cmd || motor_command_ABORT == cmd){
+  if (motor_command_STOP == cmd || motor_command_ABORT == cmd) {
     return motor_state_READY;
   }
 
@@ -20,7 +20,7 @@ motor_state fsm::states::control(motor_command cmd, Duration time_since_last_tra
   pwm::enable_trig0();
   pwm::enable_trig1();
 
-  if (!sdc_brake::request_close()){
+  if (!sdc_brake::request_close()) {
     canzero_set_command(motor_command_NONE);
     return motor_state_DISARMING45;
   }
