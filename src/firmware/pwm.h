@@ -4,9 +4,9 @@
 #include <cstdint>
 #include <optional>
 //                                                pin number   - guidance - motor
-static constexpr bool ENABLE_PWM2_SM0 = false; // pins 4, 33   -          - U1
+static constexpr bool ENABLE_PWM2_SM0 = true; // pins 4, 33   -          - U1
 static constexpr bool ENABLE_PWM2_SM2 = true;  // pins 6 , 9   - LEFT_L   - V2
-static constexpr bool ENABLE_PWM2_SM3 = false; // pins 36, 37  -          - U2
+static constexpr bool ENABLE_PWM2_SM3 = true; // pins 36, 37  -          - U2
 static constexpr bool ENABLE_PWM4_SM2 = true;  // pins 2 , 3   - LEFT_R   - W2
 static constexpr bool ENABLE_PWM3_SM1 = true;  // pins 29, 28  - RIGHT_L  - W1
 static constexpr bool ENABLE_PWM1_SM3 = true;  // pins 8 , 7   - RIGHT_R  - V1
@@ -26,8 +26,10 @@ struct PwmBeginInfo {
   bool enable_outputs = false;
   std::optional<float> trig0 = std::nullopt;
   bool enable_trig0_interrupt = false;
+  bool enable_trig0 = false;
   std::optional<float> trig1 = std::nullopt;
   bool enable_trig1_interrupt = false;
+  bool enable_trig1 = false;
   PwmControl control = PwmControl();
 };
 

@@ -59,14 +59,13 @@ void PROGMEM sensors::accelerometer::calibrate() {
   Acceleration y_sum = 0_mps2;
   Acceleration z_sum = 0_mps2;
 
-  constexpr float MEAN_ESTIMATION_IT = static_cast<float>(MEAS_FREQUENCY) * 3;
+  constexpr float MEAN_ESTIMATION_IT = static_cast<float>(MEAS_FREQUENCY);
   for (unsigned int i = 0; i < static_cast<size_t>(MEAN_ESTIMATION_IT); ++i) {
     const auto &[x, y, z] = motor_board::sync_read_acceleration();
     x_sum += x;
     y_sum += y;
     z_sum += z;
     canzero_update_continue(canzero_get_time());
-    motor_board::delay(1_ms);
   }
   Acceleration x_average = x_sum / (double)MEAN_ESTIMATION_IT;
   Acceleration x_expected = 0_mps2;

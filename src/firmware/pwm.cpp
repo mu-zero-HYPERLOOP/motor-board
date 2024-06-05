@@ -410,9 +410,9 @@ static inline uint16_t duty_to_cmp(float duty, uint16_t cycles) {
 void pwm::enable_output() {
   if (m_outen)
     return;
-  assert(m_control_initalized);
   m_outen = true;
   pwm_reg::clear_load_okay();
+  write_control();
   pwm_reg::set_output_enable(m_outen);
   pwm_reg::set_load_okay();
 }
@@ -654,8 +654,8 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
   m_trig1 = beginInfo.trig1;
   m_trig1_inten = beginInfo.enable_trig1_interrupt;
   m_control = beginInfo.control;
-  m_enable_trig0 = false;
-  m_enable_trig1 = false;
+  m_enable_trig0 = beginInfo.enable_trig0;
+  m_enable_trig1 = beginInfo.enable_trig1;
   m_control_initalized = m_outen;
 
   attachInterruptVector(IRQ_FLEXPWM4_0, pwm_isr_trig0_redirect);
@@ -674,8 +674,8 @@ void pwm::begin(const PwmBeginInfo &beginInfo) {
 
   pwm_reg::set_output_enable(m_outen);
 
-  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value(),
-                                           m_trig1.has_value());
+  pwm_reg::sm0tctrl_enable_output_triggers(m_trig0.has_value() && m_enable_trig0,
+                                           m_trig1.has_value() && m_enable_trig1);
 
   pwm_reg::sm0_interrupt_enable(m_trig0.has_value() && m_trig0_inten,
                                 m_trig1.has_value() && m_trig1_inten);

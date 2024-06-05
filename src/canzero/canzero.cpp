@@ -84,7 +84,9 @@ float DMAMEM __oe_loop_frequency;
 error_flag DMAMEM __oe_assertion_fault;
 static void canzero_serialize_canzero_message_get_resp(canzero_message_get_resp* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
   frame->id = 0xDD;
   frame->dlc = 8;
   ((uint32_t*)data)[0] = (uint8_t)(msg->m_header.m_sof & (0xFF >> (8 - 1)));
@@ -97,7 +99,9 @@ static void canzero_serialize_canzero_message_get_resp(canzero_message_get_resp*
 }
 static void canzero_serialize_canzero_message_set_resp(canzero_message_set_resp* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
   frame->id = 0xFD;
   frame->dlc = 4;
   ((uint32_t*)data)[0] = (uint16_t)(msg->m_header.m_od_index & (0xFFFF >> (16 - 13)));
@@ -107,7 +111,9 @@ static void canzero_serialize_canzero_message_set_resp(canzero_message_set_resp*
 }
 static void canzero_serialize_canzero_message_motor_driver_stream_state(canzero_message_motor_driver_stream_state* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
   frame->id = 0x8E;
   frame->dlc = 2;
   ((uint32_t*)data)[0] = (uint8_t)(msg->m_state & (0xFF >> (8 - 3)));
@@ -119,8 +125,10 @@ static void canzero_serialize_canzero_message_motor_driver_stream_state(canzero_
 }
 static void canzero_serialize_canzero_message_motor_driver_stream_debug(canzero_message_motor_driver_stream_debug* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
-  frame->id = 0xB4;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
+  frame->id = 0x53;
   frame->dlc = 4;
   uint32_t loop_frequency_0 = ((msg->m_loop_frequency - 0) / 0.00000023283064370807974) + 0.5f;
   if (loop_frequency_0 > 0xFFFFFFFF) {
@@ -130,8 +138,10 @@ static void canzero_serialize_canzero_message_motor_driver_stream_debug(canzero_
 }
 static void canzero_serialize_canzero_message_motor_driver_stream_currents_u1v1w1(canzero_message_motor_driver_stream_currents_u1v1w1* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
-  frame->id = 0x94;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
+  frame->id = 0xB4;
   frame->dlc = 8;
   uint32_t current_u1_0 = ((msg->m_current_u1 - -100) / 0.0030518043793392844) + 0.5f;
   if (current_u1_0 > 0xFFFF) {
@@ -156,8 +166,10 @@ static void canzero_serialize_canzero_message_motor_driver_stream_currents_u1v1w
 }
 static void canzero_serialize_canzero_message_motor_driver_stream_current_u2v2w2(canzero_message_motor_driver_stream_current_u2v2w2* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
-  frame->id = 0x74;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
+  frame->id = 0x94;
   frame->dlc = 8;
   uint32_t current_u2_0 = ((msg->m_current_u2 - -100) / 0.0030518043793392844) + 0.5f;
   if (current_u2_0 > 0xFFFF) {
@@ -182,8 +194,10 @@ static void canzero_serialize_canzero_message_motor_driver_stream_current_u2v2w2
 }
 static void canzero_serialize_canzero_message_motor_driver_stream_control_info(canzero_message_motor_driver_stream_control_info* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
-  frame->id = 0x54;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
+  frame->id = 0x74;
   frame->dlc = 8;
   uint32_t frequency_0 = ((msg->m_frequency - 0) / 0.0007629510948348211) + 0.5f;
   if (frequency_0 > 0xFFFF) {
@@ -208,8 +222,10 @@ static void canzero_serialize_canzero_message_motor_driver_stream_control_info(c
 }
 static void canzero_serialize_canzero_message_motor_driver_stream_board_temperature(canzero_message_motor_driver_stream_board_temperature* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
-  frame->id = 0xB5;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
+  frame->id = 0x54;
   frame->dlc = 7;
   uint32_t board_temperature1_0 = ((msg->m_board_temperature1 - -1) / 0.592156862745098) + 0.5f;
   if (board_temperature1_0 > 0xFF) {
@@ -249,8 +265,10 @@ static void canzero_serialize_canzero_message_motor_driver_stream_board_temperat
 }
 static void canzero_serialize_canzero_message_motor_driver_stream_lim_temperature(canzero_message_motor_driver_stream_lim_temperature* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
-  frame->id = 0x73;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
+  frame->id = 0x93;
   frame->dlc = 7;
   uint32_t lim_temperature1_0 = ((msg->m_lim_temperature1 - -1) / 0.592156862745098) + 0.5f;
   if (lim_temperature1_0 > 0xFF) {
@@ -290,8 +308,10 @@ static void canzero_serialize_canzero_message_motor_driver_stream_lim_temperatur
 }
 static void canzero_serialize_canzero_message_motor_driver_stream_errors(canzero_message_motor_driver_stream_errors* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
-  frame->id = 0x53;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
+  frame->id = 0x73;
   frame->dlc = 5;
   ((uint32_t*)data)[0] = (uint8_t)(msg->m_error_arming_failed & (0xFF >> (8 - 1)));
   ((uint32_t*)data)[0] |= (uint8_t)(msg->m_error_precharge_failed & (0xFF >> (8 - 1))) << 1;
@@ -320,7 +340,9 @@ static void canzero_serialize_canzero_message_motor_driver_stream_errors(canzero
 }
 static void canzero_serialize_canzero_message_heartbeat_can0(canzero_message_heartbeat_can0* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
   frame->id = 0x10C;
   frame->dlc = 2;
   ((uint32_t*)data)[0] = msg->m_node_id;
@@ -329,7 +351,9 @@ static void canzero_serialize_canzero_message_heartbeat_can0(canzero_message_hea
 }
 static void canzero_serialize_canzero_message_heartbeat_can1(canzero_message_heartbeat_can1* msg, canzero_frame* frame) {
   uint8_t* data = frame->data;
-  *((uint64_t*)data) = 0;
+  for(uint8_t i = 0; i < 8; ++i){
+    data[i] = 0;
+  }
   frame->id = 0x10B;
   frame->dlc = 2;
   ((uint32_t*)data)[0] = msg->m_node_id;
@@ -670,7 +694,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_loop_frequency = __oe_loop_frequency;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_motor_driver_stream_debug(&stream_message, &stream_frame);
-        canzero_can1_send(&stream_frame);
+        canzero_can0_send(&stream_frame);
         break;
       }
       case 2: {
@@ -684,7 +708,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_current_max = __oe_current_max;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_motor_driver_stream_currents_u1v1w1(&stream_message, &stream_frame);
-        canzero_can0_send(&stream_frame);
+        canzero_can1_send(&stream_frame);
         break;
       }
       case 3: {
@@ -698,7 +722,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_current_average = __oe_current_average;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_motor_driver_stream_current_u2v2w2(&stream_message, &stream_frame);
-        canzero_can1_send(&stream_frame);
+        canzero_can0_send(&stream_frame);
         break;
       }
       case 4: {
@@ -712,7 +736,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_vdc_voltage = __oe_vdc_voltage;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_motor_driver_stream_control_info(&stream_message, &stream_frame);
-        canzero_can1_send(&stream_frame);
+        canzero_can0_send(&stream_frame);
         break;
       }
       case 5: {
@@ -729,7 +753,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_mcu_temperature = __oe_mcu_temperature;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_motor_driver_stream_board_temperature(&stream_message, &stream_frame);
-        canzero_can0_send(&stream_frame);
+        canzero_can1_send(&stream_frame);
         break;
       }
       case 6: {
@@ -746,7 +770,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_lim_min_temperature = __oe_lim_min_temperature;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_motor_driver_stream_lim_temperature(&stream_message, &stream_frame);
-        canzero_can1_send(&stream_frame);
+        canzero_can0_send(&stream_frame);
         break;
       }
       case 7: {
@@ -860,7 +884,7 @@ static void schedule_jobs(uint32_t time) {
         canzero_exit_critical();
         canzero_frame fragmentation_frame;
         canzero_serialize_canzero_message_get_resp(&fragmentation_response, &fragmentation_frame);
-        canzero_can1_send(&fragmentation_frame);
+        canzero_can0_send(&fragmentation_frame);
         break;
       }
       default: {
@@ -1469,7 +1493,7 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
   resp.m_header.m_server_id = msg.m_header.m_server_id;
   canzero_frame resp_frame;
   canzero_serialize_canzero_message_get_resp(&resp, &resp_frame);
-  canzero_can1_send(&resp_frame);
+  canzero_can0_send(&resp_frame);
 }
 static uint32_t DMAMEM config_hash_tmp_tx_fragmentation_buffer[2];
 static uint32_t DMAMEM config_hash_tmp_tx_fragmentation_offset = 0;
@@ -2289,7 +2313,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
   resp.m_header.m_erno = set_resp_erno_Success;
   canzero_frame resp_frame;
   canzero_serialize_canzero_message_set_resp(&resp, &resp_frame);
-  canzero_can1_send(&resp_frame);
+  canzero_can0_send(&resp_frame);
 
 }
  void canzero_handle_heartbeat_can0(canzero_frame* frame) {
@@ -2342,12 +2366,6 @@ void canzero_can0_poll() {
   canzero_frame frame;
   while (canzero_can0_recv(&frame)) {
     switch (frame.id) {
-      case 0xDE:
-        canzero_handle_get_req(&frame);
-        break;
-      case 0xFE:
-        canzero_handle_set_req(&frame);
-        break;
       case 0x10C:
         canzero_handle_heartbeat_can0(&frame);
         break;
@@ -2358,6 +2376,12 @@ void canzero_can1_poll() {
   canzero_frame frame;
   while (canzero_can1_recv(&frame)) {
     switch (frame.id) {
+      case 0xDE:
+        canzero_handle_get_req(&frame);
+        break;
+      case 0xFE:
+        canzero_handle_set_req(&frame);
+        break;
       case 0x10B:
         canzero_handle_heartbeat_can1(&frame);
         break;
@@ -2419,7 +2443,7 @@ uint32_t canzero_update_continue(uint32_t time){
 #define BUILD_MIN   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_MIN)
 #define BUILD_SEC   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_SEC)
 void canzero_init() {
-  __oe_config_hash = 12742651523934993892ull;
+  __oe_config_hash = 15544614541976085237ull;
   __oe_build_time = {
     .m_year = BUILD_YEAR,
     .m_month = BUILD_MONTH,

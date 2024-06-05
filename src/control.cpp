@@ -4,14 +4,15 @@
 #include <cmath>
 #include <complex>
 #include "canzero/canzero.h"
+#include "print.h"
 
 void control::begin() {
 }
 
 
 
-static Frequency rotational_frequency = 10_Hz;
-static float modulation_index = 0.01;
+static Frequency rotational_frequency = 1_Hz;
+static float modulation_index = 0.5;
 
 static float theta = 0.0f;
 

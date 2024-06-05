@@ -22,25 +22,21 @@
 #include "xbar_config.h"
 #include "util/timing.h"
 #include "print.h"
-#include <Arduino.h>
+#include <ctime>
 
 
 static IntervalTiming mainLoopIntervalTimer;
 
 int main() {
   motor_board::delay(4_s);
-  Serial.println("here");
   canzero_init();
   
-  Serial.println("here2");
 
   fsm::begin();
   canzero_update_continue(canzero_get_time());
-  Serial.println("here3");
 
   motor_board::begin();
   
-  Serial.println("here4");
   pwm_config();
   adc_config();
   xbar_config();
@@ -49,7 +45,7 @@ int main() {
   sdc_brake::begin();
 
   // Setup sensors
-  sensors::accelerometer::begin();
+  /* sensors::accelerometer::begin(); */
   sensors::ext_ntcs::begin();
   sensors::mcu_temperature::begin();
   sensors::on_board_ntcs::begin();
@@ -57,7 +53,7 @@ int main() {
   sensors::vdc::begin();
 
   // Calibrate sensors
-  sensors::accelerometer::calibrate();
+  /* sensors::accelerometer::calibrate(); */
   sensors::ext_ntcs::calibrate();
   sensors::mcu_temperature::calibrate();
   sensors::on_board_ntcs::calibrate();
@@ -71,13 +67,15 @@ int main() {
 
   // init -> idle
   fsm::finish_init();
+  debugPrintf("Init finished\n");
+  debugPrintFlush();
   while (true) {
     canzero_can0_poll();
     canzero_can1_poll();
 
     motor_board::update();
 
-    sensors::accelerometer::update();
+    /* sensors::accelerometer::update(); */
     sensors::ext_ntcs::update();
     sensors::mcu_temperature::update();
     sensors::on_board_ntcs::update();
