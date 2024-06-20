@@ -2,6 +2,7 @@
 #include "adc_isr.h"
 #include "canzero/canzero.h"
 #include "control.h"
+#include "defaults.h"
 #include "firmware/adc_etc.h"
 #include "firmware/motor_board.h"
 #include "firmware/motor_pwm.h"
@@ -30,7 +31,8 @@ static IntervalTiming mainLoopIntervalTimer;
 int main() {
   motor_board::delay(4_s);
   canzero_init();
-  
+
+  can_defaults();
 
   fsm::begin();
   canzero_update_continue(canzero_get_time());
