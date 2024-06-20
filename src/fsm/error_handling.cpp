@@ -7,7 +7,7 @@
 motor_command fsm::error_handling::approve(motor_command cmd) {
   return cmd;
 
-  const auto error_flags = std::array<error_flag, 5>{
+  const auto error_flags = std::array<error_flag, 6>{
       canzero_get_error_arming_failed(),
       canzero_get_error_precharge_failed(),
       canzero_get_error_acceleration_calibration_failed(),
@@ -17,6 +17,7 @@ motor_command fsm::error_handling::approve(motor_command cmd) {
       /* canzero_get_error_lim_temperature3_invalid(), */
       /* canzero_get_error_lim_temperature4_invalid(), */
       canzero_get_assertion_fault(),
+      canzero_get_error_heartbeat_miss(),
   };
 
   const auto max_error_flag_it =
