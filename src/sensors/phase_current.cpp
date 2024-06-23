@@ -100,7 +100,7 @@ void sensors::phase_current::begin() {
   canzero_set_error_level_config_current_phase(error_level_config{
       .m_info_thresh = 10,
       .m_info_timeout = 0.1,
-      .m_warning_thresh = 20,
+      .m_warning_thresh = 60,
       .m_warning_timeout = 0.1,
       .m_error_thresh = 80,
       .m_error_timeout = 0.1,

@@ -4,6 +4,7 @@
 #include "firmware/motor_board.h"
 #include <cassert>
 #include "error_level_range_check.h"
+#include "print.h"
 #include "sensors/formula/isolated_voltage.h"
 #include "util/boxcar.h"
 

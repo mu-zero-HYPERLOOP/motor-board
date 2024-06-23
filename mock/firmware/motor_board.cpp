@@ -31,7 +31,7 @@ static MuxScheduler<MAX_MUX_PERIODIC_JOBS> mux_scheduler;
 
 static uint8_t mux_sel;
 
-static BoxcarFilter<Voltage, 1000> vdc_voltage(0_V);
+static BoxcarFilter<Voltage, 3> vdc_voltage(0_V);
 
 static float v1 = 0;
 static float w1 = 0;
@@ -85,50 +85,47 @@ Voltage motor_board::sync_read(ain_pin pin) {
     case motor_state_IDLE:
     case motor_state_ARMING45:
     case motor_state_DISARMING45:
-      vdc_voltage.push(0_V);
-      break;
+      return sensors::formula::inv_isolated_voltage(0_V);
     case motor_state_PRECHARGE:
     case motor_state_READY:
     case motor_state_CONTROL:
-      vdc_voltage.push(45_V);
-      break;
+      return sensors::formula::inv_isolated_voltage(45_V);
     }
-    return sensors::formula::inv_isolated_voltage(vdc_voltage.get());
   }
   case ain_imeas_w2_19: {
     const Voltage v = sensors::formula::inv_current_sense(
         Current(w2), sensors::phase_current::CURRENT_SENSE_GAIN);
-    std::normal_distribution dist{static_cast<float>(v), 0.1f};
+    std::normal_distribution dist{static_cast<float>(v), 0.01f};
     return Voltage(dist(gen));
   }
   case ain_imeas_v2_18: {
     const Voltage v = sensors::formula::inv_current_sense(
         Current(v2), sensors::phase_current::CURRENT_SENSE_GAIN);
-    std::normal_distribution dist{static_cast<float>(v), 0.1f};
+    std::normal_distribution dist{static_cast<float>(v), 0.01f};
     return Voltage(dist(gen));
   }
   case ain_imeas_u2_17: {
     const Voltage v = sensors::formula::inv_current_sense(
         Current(u2), sensors::phase_current::CURRENT_SENSE_GAIN);
-    std::normal_distribution dist{static_cast<float>(v), 0.1f};
+    std::normal_distribution dist{static_cast<float>(v), 0.01f};
     return Voltage(dist(gen));
   }
   case ain_imeas_u1_16: {
     const Voltage v = sensors::formula::inv_current_sense(
         Current(u1), sensors::phase_current::CURRENT_SENSE_GAIN);
-    std::normal_distribution dist{static_cast<float>(v), 0.1f};
+    std::normal_distribution dist{static_cast<float>(v), 0.01f};
     return Voltage(dist(gen));
   }
   case ain_imeas_v1_15: {
     const Voltage v = sensors::formula::inv_current_sense(
         Current(v1), sensors::phase_current::CURRENT_SENSE_GAIN);
-    std::normal_distribution dist{static_cast<float>(v), 0.1f};
+    std::normal_distribution dist{static_cast<float>(v), 0.01f};
     return Voltage(dist(gen));
   }
   case ain_imeas_w1_14: {
     const Voltage v = sensors::formula::inv_current_sense(
         Current(w1), sensors::phase_current::CURRENT_SENSE_GAIN);
-    std::normal_distribution dist{static_cast<float>(v), 0.1f};
+    std::normal_distribution dist{static_cast<float>(v), 0.01f};
     return Voltage(dist(gen));
   }
   }

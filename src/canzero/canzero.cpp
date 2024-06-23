@@ -129,7 +129,7 @@ static void canzero_serialize_canzero_message_motor_driver_stream_debug(canzero_
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0x12E;
+  frame->id = 0xEE;
   frame->dlc = 4;
   uint32_t loop_frequency_0 = ((msg->m_loop_frequency - 0) / 0.00000023283064370807974) + 0.5f;
   if (loop_frequency_0 > 0xFFFFFFFF) {
@@ -142,7 +142,7 @@ static void canzero_serialize_canzero_message_motor_driver_stream_currents_u1v1w
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0xEE;
+  frame->id = 0xAE;
   frame->dlc = 8;
   uint32_t current_u1_0 = ((msg->m_current_u1 - -100) / 0.0030518043793392844) + 0.5f;
   if (current_u1_0 > 0xFFFF) {
@@ -170,7 +170,7 @@ static void canzero_serialize_canzero_message_motor_driver_stream_current_u2v2w2
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0xAE;
+  frame->id = 0x12F;
   frame->dlc = 8;
   uint32_t current_u2_0 = ((msg->m_current_u2 - -100) / 0.0030518043793392844) + 0.5f;
   if (current_u2_0 > 0xFFFF) {
@@ -198,7 +198,7 @@ static void canzero_serialize_canzero_message_motor_driver_stream_control_info(c
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0x12F;
+  frame->id = 0xEF;
   frame->dlc = 8;
   uint32_t frequency_0 = ((msg->m_frequency - 0) / 0.0007629510948348211) + 0.5f;
   if (frequency_0 > 0xFFFF) {
@@ -215,7 +215,7 @@ static void canzero_serialize_canzero_message_motor_driver_stream_control_info(c
     acceleration_32 = 0xFFFF;
   }
   ((uint32_t*)data)[1] = acceleration_32;
-  uint32_t vdc_voltage_48 = ((msg->m_vdc_voltage - 0) / 0.0015259021896696422) + 0.5f;
+  uint32_t vdc_voltage_48 = ((msg->m_vdc_voltage - -100) / 0.0030518043793392844) + 0.5f;
   if (vdc_voltage_48 > 0xFFFF) {
     vdc_voltage_48 = 0xFFFF;
   }
@@ -226,7 +226,7 @@ static void canzero_serialize_canzero_message_motor_driver_stream_board_temperat
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0xEF;
+  frame->id = 0xAF;
   frame->dlc = 7;
   uint32_t board_temperature1_0 = ((msg->m_board_temperature1 - -1) / 0.592156862745098) + 0.5f;
   if (board_temperature1_0 > 0xFF) {
@@ -269,7 +269,7 @@ static void canzero_serialize_canzero_message_motor_driver_stream_lim_temperatur
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0xED;
+  frame->id = 0xAD;
   frame->dlc = 7;
   uint32_t lim_temperature1_0 = ((msg->m_lim_temperature1 - -1) / 0.592156862745098) + 0.5f;
   if (lim_temperature1_0 > 0xFF) {
@@ -312,7 +312,7 @@ static void canzero_serialize_canzero_message_motor_driver_stream_errors(canzero
   for(uint8_t i = 0; i < 8; ++i){
     data[i] = 0;
   }
-  frame->id = 0xAD;
+  frame->id = 0x12E;
   frame->dlc = 5;
   ((uint32_t*)data)[0] = (uint8_t)(msg->m_error_arming_failed & (0xFF >> (8 - 1)));
   ((uint32_t*)data)[0] |= (uint8_t)(msg->m_error_precharge_failed & (0xFF >> (8 - 1))) << 1;
@@ -852,13 +852,13 @@ static void schedule_jobs(uint32_t time) {
         canzero_message_heartbeat_can0 heartbeat_can0;
         heartbeat_can0.m_node_id = node_id_motor_driver;
         heartbeat_can0.m_unregister = 0;
-        heartbeat_can0.m_ticks_next = 10;
+        heartbeat_can0.m_ticks_next = 20;
         canzero_serialize_canzero_message_heartbeat_can0(&heartbeat_can0, &heartbeat_frame);
         canzero_can0_send(&heartbeat_frame);
         canzero_message_heartbeat_can1 heartbeat_can1;
         heartbeat_can1.m_node_id = node_id_motor_driver;
         heartbeat_can1.m_unregister = 0;
-        heartbeat_can1.m_ticks_next = 10;
+        heartbeat_can1.m_ticks_next = 20;
         canzero_serialize_canzero_message_heartbeat_can1(&heartbeat_can1, &heartbeat_frame);
         canzero_can1_send(&heartbeat_frame);
         break;
@@ -1245,7 +1245,7 @@ static PROGMEM void canzero_handle_get_req(canzero_frame* frame) {
     break;
   }
   case 37: {
-    resp.m_data |= min_u32((__oe_vdc_voltage - (0)) / 0.0015259021896696422, 0xFFFF) << 0;
+    resp.m_data |= min_u32((__oe_vdc_voltage - (-100)) / 0.0030518043793392844, 0xFFFF) << 0;
     resp.m_header.m_sof = 1;
     resp.m_header.m_eof = 1;
     resp.m_header.m_toggle = 0;
@@ -1971,7 +1971,7 @@ static PROGMEM void canzero_handle_set_req(canzero_frame* frame) {
       return;
     }
     float vdc_voltage_tmp;
-    vdc_voltage_tmp = (float)(((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 16))) * 0.0015259021896696422 + 0);
+    vdc_voltage_tmp = (float)(((msg.m_data >> 0) & (0xFFFFFFFF >> (32 - 16))) * 0.0030518043793392844 + -100);
     canzero_set_vdc_voltage(vdc_voltage_tmp);
     break;
   }
@@ -2439,7 +2439,7 @@ void canzero_can0_poll() {
       case 0x17E:
         canzero_handle_get_req(&frame);
         break;
-      case 0xA1:
+      case 0xA0:
         canzero_handle_mother_board_stream_motor_command(&frame);
         break;
       case 0x1E5:
@@ -2516,7 +2516,7 @@ uint32_t canzero_update_continue(uint32_t time){
 #define BUILD_MIN   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_MIN)
 #define BUILD_SEC   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_SEC)
 void canzero_init() {
-  __oe_config_hash = 11303641531648925212ull;
+  __oe_config_hash = 13839418029710939869ull;
   __oe_build_time = {
     .m_year = BUILD_YEAR,
     .m_month = BUILD_MONTH,
@@ -3386,7 +3386,7 @@ void canzero_send_external_position() {
 }
 void canzero_send_vdc_voltage() {
   canzero_message_get_resp msg;
-  msg.m_data |= min_u32((__oe_vdc_voltage - (0)) / 0.0015259021896696422, 0xFFFF) << 0;
+  msg.m_data |= min_u32((__oe_vdc_voltage - (-100)) / 0.0030518043793392844, 0xFFFF) << 0;
   msg.m_header.m_eof = 1;
   msg.m_header.m_sof = 1;
   msg.m_header.m_toggle = 0;
