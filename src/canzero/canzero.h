@@ -2,6 +2,7 @@
 #define CANZERO_H
 #include <cinttypes>
 #include <cstddef>
+#define MAX_DYN_HEARTBEATS 10
 typedef enum {
   node_id_gamepad = 0,
   node_id_mother_board = 1,
@@ -102,6 +103,7 @@ typedef struct {
   bool_t m_ignore_warning;
   bool_t m_ignore_error;
 } error_level_config;
+static const node_id CANZERO_NODE_ID = node_id_motor_driver;
 typedef struct {
   uint32_t id;
   uint8_t dlc;

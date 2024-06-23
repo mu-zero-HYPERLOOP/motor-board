@@ -396,7 +396,9 @@ static void canzero_deserialize_canzero_message_heartbeat_can1(canzero_frame* fr
   msg->m_ticks_next = ((((uint32_t*)data)[0] >> 9) & (0xFFFFFFFF >> (32 - 7)));
 }
 __attribute__((weak)) void canzero_can0_wdg_timeout(uint8_t node_id) {}
+__attribute__((weak)) void canzero_can0_wdg_recovered(uint8_t node_id) {}
 __attribute__((weak)) void canzero_can1_wdg_timeout(uint8_t node_id) {}
+__attribute__((weak)) void canzero_can1_wdg_recovered(uint8_t node_id) {}
 
 typedef enum {
   HEARTBEAT_JOB_TAG = 0,
@@ -418,7 +420,6 @@ typedef struct {
   uint32_t stream_id;
 } stream_interval_job;
 
-#define MAX_DYN_HEARTBEATS 10
 typedef struct {
   unsigned int* can0_static_wdg_armed;
   int* can0_static_tick_countdowns;
@@ -851,13 +852,13 @@ static void schedule_jobs(uint32_t time) {
         canzero_message_heartbeat_can0 heartbeat_can0;
         heartbeat_can0.m_node_id = node_id_motor_driver;
         heartbeat_can0.m_unregister = 0;
-        heartbeat_can0.m_ticks_next = 4;
+        heartbeat_can0.m_ticks_next = 10;
         canzero_serialize_canzero_message_heartbeat_can0(&heartbeat_can0, &heartbeat_frame);
         canzero_can0_send(&heartbeat_frame);
         canzero_message_heartbeat_can1 heartbeat_can1;
         heartbeat_can1.m_node_id = node_id_motor_driver;
         heartbeat_can1.m_unregister = 0;
-        heartbeat_can1.m_ticks_next = 4;
+        heartbeat_can1.m_ticks_next = 10;
         canzero_serialize_canzero_message_heartbeat_can1(&heartbeat_can1, &heartbeat_frame);
         canzero_can1_send(&heartbeat_frame);
         break;
@@ -2376,9 +2377,13 @@ static void canzero_handle_mother_board_stream_motor_command(canzero_frame* fram
   if (msg.m_node_id < node_id_count) {   // static heartbeat
     if (msg.m_unregister != 0) {  // unregister only unregisters this bus
       heartbeat_wdg_job.job.wdg_job.can0_static_wdg_armed[msg.m_node_id] = 0;
-    } else { // register registers all buses
+    } else { // register registers for all buses
       heartbeat_wdg_job.job.wdg_job.can0_static_wdg_armed[msg.m_node_id] = 1;
       heartbeat_wdg_job.job.wdg_job.can1_static_wdg_armed[msg.m_node_id] = 1;
+    }
+    if (heartbeat_wdg_job.job.wdg_job.can0_static_tick_countdowns[msg.m_node_id] <= 0 &&
+        msg.m_ticks_next > 0) {
+      canzero_can0_wdg_recovered(msg.m_node_id);
     }
     heartbeat_wdg_job.job.wdg_job.can0_static_tick_countdowns[msg.m_node_id] = msg.m_ticks_next;
   } else {  // dynamic heartbeat
@@ -2387,6 +2392,10 @@ static void canzero_handle_mother_board_stream_motor_command(canzero_frame* fram
     } else { // register registers all buses
       heartbeat_wdg_job.job.wdg_job.can0_dynamic_wdg_armed[msg.m_node_id - node_id_count] = 1;
       heartbeat_wdg_job.job.wdg_job.can1_dynamic_wdg_armed[msg.m_node_id - node_id_count] = 1;
+    }
+    if (heartbeat_wdg_job.job.wdg_job.can0_dynamic_tick_countdowns[msg.m_node_id - node_id_count] <= 0 
+        && msg.m_ticks_next > 0) {
+      canzero_can0_wdg_recovered(msg.m_node_id);
     }
     heartbeat_wdg_job.job.wdg_job.can0_dynamic_tick_countdowns[msg.m_node_id - node_id_count]
       = msg.m_ticks_next;
@@ -2399,9 +2408,13 @@ static void canzero_handle_mother_board_stream_motor_command(canzero_frame* fram
   if (msg.m_node_id < node_id_count) {   // static heartbeat
     if (msg.m_unregister != 0) {  // unregister only unregisters this bus
       heartbeat_wdg_job.job.wdg_job.can1_static_wdg_armed[msg.m_node_id] = 0;
-    } else { // register registers all buses
+    } else { // register registers for all buses
       heartbeat_wdg_job.job.wdg_job.can0_static_wdg_armed[msg.m_node_id] = 1;
       heartbeat_wdg_job.job.wdg_job.can1_static_wdg_armed[msg.m_node_id] = 1;
+    }
+    if (heartbeat_wdg_job.job.wdg_job.can1_static_tick_countdowns[msg.m_node_id] <= 0 &&
+        msg.m_ticks_next > 0) {
+      canzero_can1_wdg_recovered(msg.m_node_id);
     }
     heartbeat_wdg_job.job.wdg_job.can1_static_tick_countdowns[msg.m_node_id] = msg.m_ticks_next;
   } else {  // dynamic heartbeat
@@ -2410,6 +2423,10 @@ static void canzero_handle_mother_board_stream_motor_command(canzero_frame* fram
     } else { // register registers all buses
       heartbeat_wdg_job.job.wdg_job.can0_dynamic_wdg_armed[msg.m_node_id - node_id_count] = 1;
       heartbeat_wdg_job.job.wdg_job.can1_dynamic_wdg_armed[msg.m_node_id - node_id_count] = 1;
+    }
+    if (heartbeat_wdg_job.job.wdg_job.can1_dynamic_tick_countdowns[msg.m_node_id - node_id_count] <= 0 
+        && msg.m_ticks_next > 0) {
+      canzero_can1_wdg_recovered(msg.m_node_id);
     }
     heartbeat_wdg_job.job.wdg_job.can1_dynamic_tick_countdowns[msg.m_node_id - node_id_count]
       = msg.m_ticks_next;

@@ -3,12 +3,7 @@
 #include "canzero/canzero.h"
 #include "control.h"
 #include "defaults.h"
-#include "firmware/adc_etc.h"
 #include "firmware/motor_board.h"
-#include "firmware/motor_pwm.h"
-#include "firmware/pinout.h"
-#include "firmware/pwm.h"
-#include "firmware/xbar.h"
 #include "fsm/fsm.h"
 #include "pwm_config.h"
 #include "sdc_brake.h"
@@ -18,18 +13,14 @@
 #include "sensors/on_board_ntcs.h"
 #include "sensors/phase_current.h"
 #include "sensors/vdc.h"
-#include "util/interval.h"
-#include "util/lina.h"
 #include "xbar_config.h"
 #include "util/timing.h"
 #include "print.h"
-#include <ctime>
 
 
 static IntervalTiming mainLoopIntervalTimer;
 
 int main() {
-  motor_board::delay(4_s);
   canzero_init();
 
   can_defaults();
@@ -47,7 +38,7 @@ int main() {
   sdc_brake::begin();
 
   // Setup sensors
-  /* sensors::accelerometer::begin(); */
+  sensors::accelerometer::begin();
   sensors::ext_ntcs::begin();
   sensors::mcu_temperature::begin();
   sensors::on_board_ntcs::begin();
@@ -55,7 +46,7 @@ int main() {
   sensors::vdc::begin();
 
   // Calibrate sensors
-  /* sensors::accelerometer::calibrate(); */
+  sensors::accelerometer::calibrate();
   sensors::ext_ntcs::calibrate();
   sensors::mcu_temperature::calibrate();
   sensors::on_board_ntcs::calibrate();
@@ -77,7 +68,7 @@ int main() {
 
     motor_board::update();
 
-    /* sensors::accelerometer::update(); */
+    sensors::accelerometer::update();
     sensors::ext_ntcs::update();
     sensors::mcu_temperature::update();
     sensors::on_board_ntcs::update();

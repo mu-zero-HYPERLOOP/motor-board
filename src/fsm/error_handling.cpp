@@ -2,10 +2,8 @@
 #include "canzero/canzero.h"
 #include <algorithm>
 #include <array>
-#include "print.h"
 
 motor_command fsm::error_handling::approve(motor_command cmd) {
-  return cmd;
 
   const auto error_flags = std::array<error_flag, 6>{
       canzero_get_error_arming_failed(),
@@ -50,7 +48,6 @@ motor_command fsm::error_handling::approve(motor_command cmd) {
   switch (error_level) {
   case error_level_OK:
   case error_level_INFO:
-    debugPrintf("Ok\n");
     return cmd;
   case error_level_WARNING:
     return motor_command_ABORT;

@@ -1,7 +1,6 @@
 #include "firmware/adc_etc.h"
 #include <cassert>
 #include "firmware/motor_board.h"
-#include <iostream>
 #include "util/metrics.h"
 #include <array>
 

@@ -1,6 +1,5 @@
 #include "canzero/canzero.h"
 #include "feedthrough_mosfet.h"
-#include "firmware/motor_board.h"
 #include "fsm/states.h"
 #include "precharge_mosfet.h"
 #include "sdc_brake.h"
