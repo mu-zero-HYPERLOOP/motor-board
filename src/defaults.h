@@ -30,4 +30,6 @@ static void can_defaults() {
   canzero_set_error_level_lim_temperature(error_level_OK);
   canzero_set_error_level_mcu_temperature(error_level_OK);
   canzero_set_error_level_board_temperature(error_level_OK);
+
+  canzero_set_ignore_45v(bool_t_FALSE);
 }
