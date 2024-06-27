@@ -75,6 +75,10 @@ void adc_etc_done0_isr(AdcTrigRes res) {
       isr_control.U1_duty = 0.5 + u_u/1.0; 
       isr_control.V1_duty = 0.5 + u_v/1.0; 
       isr_control.W1_duty = 0.5 + u_w/1.0; 
+
+      isr_control.U2_duty = 0.5 - u_u/1.0; 
+      isr_control.V2_duty = 0.5 - u_v/1.0; 
+      isr_control.W2_duty = 0.5 - u_w/1.0; 
     }
 
     pwm_set_control(isr_control);
