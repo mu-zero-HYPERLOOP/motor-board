@@ -29,14 +29,14 @@ constexpr float sqrt3over2 = 0.866025;
 
 // some values for testing
 constexpr Frequency my_pwm_freq = 20_kHz;
-volatile Frequency rotational_freq = 16_Hz;
-float modulation_index = 0.5;
+volatile Frequency rotational_freq = 32_Hz;
+float modulation_index = 0.6;
 
 int main_counter = 0;
 
 
 void adc_etc_done0_isr(AdcTrigRes res) {
-  if(modulation_index > 0.5) {
+  if(modulation_index > 0.8) {
     modulation_index = 0;
   }
   if(!error_flag) {
