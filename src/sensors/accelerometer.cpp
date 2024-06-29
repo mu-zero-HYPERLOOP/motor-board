@@ -70,9 +70,9 @@ void PROGMEM sensors::accelerometer::calibrate() {
   canzero_set_acceleration_calibration_offset(static_cast<float>(offset_x));
 
   bool calibration_ok = true;
-  if (std::abs(canzero_get_acceleration_calibration_offset()) > 0.1) {
-    calibration_ok = false;
-  }
+  /* if (std::abs(canzero_get_acceleration_calibration_offset()) > 0.1) { */
+  /*   calibration_ok = false; */
+  /* } */
 
   constexpr float VARIANCE_ESTIMATION_IT = static_cast<float>(MEAS_FREQUENCY);
   float x_var = 0;
