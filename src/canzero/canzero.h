@@ -465,28 +465,28 @@ static const uint32_t canzero_message_motor_driver_stream_errors_id = 0xAF;
 typedef struct {
   float m_loop_frequency;
 } canzero_message_motor_driver_stream_debug;
-static const uint32_t canzero_message_motor_driver_stream_debug_id = 0x94;
+static const uint32_t canzero_message_motor_driver_stream_debug_id = 0xB4;
 typedef struct {
   float m_current_u1;
   float m_current_v1;
   float m_current_w1;
   float m_current_max;
 } canzero_message_motor_driver_stream_currents_u1v1w1;
-static const uint32_t canzero_message_motor_driver_stream_currents_u1v1w1_id = 0x74;
+static const uint32_t canzero_message_motor_driver_stream_currents_u1v1w1_id = 0x94;
 typedef struct {
   float m_current_u2;
   float m_current_v2;
   float m_current_w2;
   float m_current_average;
 } canzero_message_motor_driver_stream_current_u2v2w2;
-static const uint32_t canzero_message_motor_driver_stream_current_u2v2w2_id = 0x54;
+static const uint32_t canzero_message_motor_driver_stream_current_u2v2w2_id = 0x74;
 typedef struct {
   float m_frequency;
   float m_modulation_index;
   float m_acceleration;
   float m_vdc_voltage;
 } canzero_message_motor_driver_stream_control_info;
-static const uint32_t canzero_message_motor_driver_stream_control_info_id = 0xD5;
+static const uint32_t canzero_message_motor_driver_stream_control_info_id = 0x54;
 typedef struct {
   float m_board_temperature1;
   float m_board_temperature2;
@@ -496,7 +496,7 @@ typedef struct {
   float m_board_min_temperature;
   float m_mcu_temperature;
 } canzero_message_motor_driver_stream_board_temperature;
-static const uint32_t canzero_message_motor_driver_stream_board_temperature_id = 0xB5;
+static const uint32_t canzero_message_motor_driver_stream_board_temperature_id = 0xD5;
 typedef struct {
   float m_lim_temperature1;
   float m_lim_temperature2;
@@ -506,7 +506,7 @@ typedef struct {
   float m_lim_max_temperature;
   float m_lim_min_temperature;
 } canzero_message_motor_driver_stream_lim_temperature;
-static const uint32_t canzero_message_motor_driver_stream_lim_temperature_id = 0xB4;
+static const uint32_t canzero_message_motor_driver_stream_lim_temperature_id = 0xD4;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;

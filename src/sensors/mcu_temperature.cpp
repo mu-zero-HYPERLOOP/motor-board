@@ -1,9 +1,11 @@
 #include "sensors/mcu_temperature.h"
-#include <avr/pgmspace.h>
-#include "util/interval.h"
+#include "print.h"
 #include "util/boxcar.h"
+#include "canzero/canzero.h"
 #include "error_level_range_check.h"
 #include "firmware/motor_board.h"
+#include "util/interval.h"
+#include <avr/pgmspace.h>
 
 static DMAMEM Interval interval(10_Hz);
 static DMAMEM BoxcarFilter<Temperature, 100> filter(24_Celcius);
@@ -28,6 +30,8 @@ void FLASHMEM sensors::mcu_temperature::begin() {
       .m_ignore_warning = bool_t_FALSE,
       .m_ignore_error = bool_t_FALSE,
   });
+
+  // pass
 }
 
 void PROGMEM sensors::mcu_temperature::calibrate() {

@@ -35,7 +35,7 @@ Voltage FASTRUN motor_board::sync_read(mux_pin pin) {
 
 Temperature motor_board::read_mcu_temperature() {
   float temp = InternalTemperature.readTemperatureC();
-  float temp_kelvin = temp - 273.15f;
+  float temp_kelvin = temp + 273.15f;
   return Temperature(temp_kelvin);
 }
 
