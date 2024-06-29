@@ -23,7 +23,8 @@ static void on_ext1_value(const Voltage &v) {
   using namespace sensors::ext_ntcs;
   const Resistance r_ntc =
       sensors::formula::r1_of_voltage_divider(5_V, v, R_MEAS);
-  const Temperature temp = sensors::formula::ptxxx(r_ntc, PT_R0, PT_ALPHA);
+  // const Temperature temp = sensors::formula::ptxxx(r_ntc, PT_R0, PT_ALPHA);
+  const Temperature temp = 24_Celcius;
   ext1_filter.push(temp);
   canzero_set_lim_temperature1(
       static_cast<float>(ext1_filter.get() - 0_Celcius));
@@ -33,7 +34,8 @@ static void on_ext2_value(const Voltage &v) {
   using namespace sensors::ext_ntcs;
   const Resistance r_ntc =
       sensors::formula::r1_of_voltage_divider(5_V, v, R_MEAS);
-  const Temperature temp = sensors::formula::ptxxx(r_ntc, PT_R0, PT_ALPHA);
+  // const Temperature temp = sensors::formula::ptxxx(r_ntc, PT_R0, PT_ALPHA);
+  const Temperature temp = 24_Celcius;
   ext2_filter.push(temp);
   canzero_set_lim_temperature2(
       static_cast<float>(ext2_filter.get() - 0_Celcius));
@@ -43,7 +45,8 @@ static void on_ext3_value(const Voltage &v) {
   using namespace sensors::ext_ntcs;
   const Resistance r_ntc =
       sensors::formula::r1_of_voltage_divider(5_V, v, R_MEAS);
-  const Temperature temp = sensors::formula::ptxxx(r_ntc, PT_R0, PT_ALPHA);
+  // const Temperature temp = sensors::formula::ptxxx(r_ntc, PT_R0, PT_ALPHA);
+  const Temperature temp = 24_Celcius;
   ext3_filter.push(temp);
   canzero_set_lim_temperature3(
       static_cast<float>(ext3_filter.get() - 0_Celcius));
@@ -53,7 +56,8 @@ static void on_ext4_value(const Voltage &v) {
   using namespace sensors::ext_ntcs;
   const Resistance r_ntc =
       sensors::formula::r1_of_voltage_divider(5_V, v, R_MEAS);
-  const Temperature temp = sensors::formula::ptxxx(r_ntc, PT_R0, PT_ALPHA);
+  // const Temperature temp = sensors::formula::ptxxx(r_ntc, PT_R0, PT_ALPHA);
+  const Temperature temp = 24_Celcius;
   ext4_filter.push(temp);
   canzero_set_lim_temperature4(
       static_cast<float>(ext4_filter.get() - 0_Celcius));
