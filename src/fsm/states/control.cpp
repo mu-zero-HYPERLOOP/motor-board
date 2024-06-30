@@ -16,7 +16,6 @@ motor_state fsm::states::control(motor_command cmd, Duration time_since_last_tra
 
   pwm::enable_output();
   // control is set by ISR!
-  pwm::enable_trig0();
   pwm::enable_trig1();
 
   if (!sdc_brake::request_close()) {

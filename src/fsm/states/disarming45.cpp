@@ -16,8 +16,8 @@ motor_state fsm::states::disarming45(motor_command cmd,
 
   pwm::control(PwmControl());
   pwm::enable_output();
-  pwm::disable_trig0();
   pwm::disable_trig1();
+
   sdc_brake::open();
   precharge_mosfet::open();
   feedthrough_mosfet::open();

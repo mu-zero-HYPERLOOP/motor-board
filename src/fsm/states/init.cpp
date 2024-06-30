@@ -15,7 +15,6 @@ motor_state fsm::states::init(motor_command cmd, Duration time_since_last_transi
   feedthrough_mosfet::open();
 
   pwm::disable_output();
-  pwm::disable_trig0();
   pwm::disable_trig1();
 
 

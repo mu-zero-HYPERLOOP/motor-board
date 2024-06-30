@@ -15,15 +15,17 @@ motor_state fsm::states::idle(motor_command cmd, Duration time_since_last_transi
     canzero_set_error_precharge_failed(error_flag_OK);
   }
 
+
   sdc_brake::release_brake();
   sdc_brake::open();
+
+  pwm::disable_output();
+  pwm::disable_trig1();
+
 
   precharge_mosfet::open();
   feedthrough_mosfet::open();
   
-  pwm::disable_output();
-  pwm::disable_trig0();
-  pwm::disable_trig1();
 
   return motor_state_IDLE;
 }

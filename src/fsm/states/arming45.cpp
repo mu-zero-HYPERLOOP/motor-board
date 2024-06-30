@@ -23,7 +23,6 @@ motor_state fsm::states::arming45(motor_command cmd, Duration time_since_last_tr
 
   pwm::control(PwmControl());
   pwm::enable_output();
-  pwm::disable_trig0();
   pwm::disable_trig1();
 
   if (!sdc_brake::request_close()){

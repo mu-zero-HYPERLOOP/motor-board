@@ -48,6 +48,7 @@ int main() {
   // Calibrate sensors
   sensors::accelerometer::calibrate();
   sensors::ext_ntcs::calibrate();
+
   sensors::mcu_temperature::calibrate();
   sensors::on_board_ntcs::calibrate();
   sensors::phase_current::calibrate();

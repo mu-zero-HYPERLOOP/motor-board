@@ -18,11 +18,12 @@ motor_state fsm::states::ready(motor_command cmd,
   
   pwm::control(PwmControl());
   pwm::enable_output();
-  pwm::disable_trig0();
   pwm::disable_trig1();
+
   if (!sdc_brake::request_close()) {
     canzero_set_command(motor_command_NONE);
   }
+
   precharge_mosfet::open();
   feedthrough_mosfet::close();
 

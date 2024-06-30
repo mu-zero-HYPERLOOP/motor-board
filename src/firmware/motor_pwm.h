@@ -10,11 +10,6 @@ struct MotorPwmControl {
   float W1_duty = 0.5;
   float V1_duty = 0.5;
   constexpr operator PwmControl() const {
-    return PwmControl{.duty20 = U1_duty,
-                      .duty22 = V2_duty,
-                      .duty23 = U2_duty,
-                      .duty42 = W2_duty,
-                      .duty31 = W1_duty,
-                      .duty13 = V1_duty};
+    return PwmControl(U1_duty, V2_duty, U2_duty, W2_duty, W1_duty, V1_duty);
   }
 };
