@@ -9,10 +9,11 @@
 #include "util/boxcar.h"
 #include <algorithm>
 #include <cassert>
+#include "print.h"
 
-static DMAMEM BoxcarFilter<Temperature, 100> vdc_filter(24_Celcius);
-static DMAMEM BoxcarFilter<Temperature, 100> v1_filter(24_Celcius);
-static DMAMEM BoxcarFilter<Temperature, 100> v2_filter(24_Celcius);
+static DMAMEM BoxcarFilter<Temperature, 10> vdc_filter(24_Celcius);
+static DMAMEM BoxcarFilter<Temperature, 10> v1_filter(24_Celcius);
+static DMAMEM BoxcarFilter<Temperature, 10> v2_filter(24_Celcius);
 
 static DMAMEM ErrorLevelRangeCheck<EXPECT_UNDER>
     error_check(canzero_get_board_max_temperature,
@@ -49,7 +50,7 @@ static void on_ntc_phase2_value(const Voltage &v) {
       sensors::formula::ntc_beta(r_ntc, NTC_BETA, NTC_R_REF, NTC_T_REF);
   v2_filter.push(temp);
   canzero_set_board_temperature3(
-      static_cast<float>(v1_filter.get() - 0_Celcius));
+      static_cast<float>(v2_filter.get() - 0_Celcius));
 }
 
 void sensors::on_board_ntcs::begin() {
@@ -122,5 +123,6 @@ void sensors::on_board_ntcs::update() {
   canzero_set_board_min_temperature(static_cast<float>(min - 0_Celcius));
   canzero_set_board_max_temperature(static_cast<float>(max - 0_Celcius));
   canzero_set_board_avg_temperature(static_cast<float>(avg - 0_Celcius));
+
   error_check.check();
 }

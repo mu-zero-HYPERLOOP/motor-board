@@ -1,9 +1,9 @@
 #pragma once
 
 enum ctrl_pin {
-  mux_sel0 = 25,
+  mux_sel0 = 27,
   mux_sel1 = 26,
-  mux_sel2 = 27,
+  mux_sel2 = 25,
   accel_cs = 10,
   sdc_trig = 32,
   precharge_start = 23,
