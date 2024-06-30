@@ -4,6 +4,7 @@
 #include "firmware/adc_etc.h"
 #include "firmware/ain_scheduler.h"
 #include "firmware/mux_scheduler.h"
+#include "firmware/pinout.h"
 #include "firmware/xbar.h"
 #include <tuple>
 #include "util/periodic_scheduler.h"
@@ -23,6 +24,10 @@ void FLASHMEM motor_board::begin() {
   digitalWrite(static_cast<uint8_t>(ctrl_pin::precharge_start), false);
   pinMode(static_cast<uint8_t>(ctrl_pin::precharge_done), OUTPUT);
   digitalWrite(static_cast<uint8_t>(ctrl_pin::precharge_done), false);
+
+  pinMode(mux_sel0, OUTPUT);
+  pinMode(mux_sel1, OUTPUT);
+  pinMode(mux_sel2, OUTPUT);
 }
 
 Voltage FASTRUN motor_board::sync_read(ain_pin pin) {
