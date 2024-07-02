@@ -24,7 +24,6 @@ int main() {
   canzero_init();
 
   can_defaults();
-
   fsm::begin();
   canzero_update_continue(canzero_get_time());
 
@@ -61,7 +60,6 @@ int main() {
 
   // init -> idle
   fsm::finish_init();
-  debugPrintf("Init finished\n");
   debugPrintFlush();
   while (true) {
     canzero_can0_poll();

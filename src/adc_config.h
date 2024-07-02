@@ -4,7 +4,7 @@
 
 static void adc_config() {
 
-  TrigChainInfo adcEtcChains[4];
+  TrigChainInfo adcEtcChains[1];
   adcEtcChains[0].trig_num = TRIG0;
   ain_pin chain0_pins[] = {ain_vdc_20};
   adcEtcChains[0].chain_length = sizeof(chain0_pins) / sizeof(ain_pin);
