@@ -22,9 +22,10 @@ static void FASTRUN on_value(const Acceleration &x, const Acceleration &y,
 
   const Acceleration acceleration = x + offset_x;
   canzero_set_acceleration(static_cast<float>(acceleration));
-  canzero_set_error_acceleration_out_of_range(
-      (acceleration.abs() > max_acceleration) ? error_flag_ERROR
-                                              : error_flag_OK);
+  canzero_set_error_acceleration_out_of_range(error_flag_OK);
+  /* canzero_set_error_acceleration_out_of_range( */
+  /*     (acceleration.abs() > max_acceleration) ? error_flag_ERROR */
+  /*                                             : error_flag_OK); */
 }
 
 void FLASHMEM sensors::accelerometer::begin() {
