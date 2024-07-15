@@ -16,9 +16,16 @@ motor_state fsm::states::ready(motor_command cmd,
   }
 
   
-  pwm::control(PwmControl());
-  pwm::enable_output();
   pwm::disable_trig1();
+  PwmControl control;
+  control.duty13 = 0.0f;
+  control.duty20 = 0.0f;
+  control.duty22 = 0.0f;
+  control.duty23 = 0.0f;
+  control.duty31 = 0.0f;
+  control.duty42 = 0.0f;
+  pwm::control(control);
+  pwm::enable_output();
 
   if (!sdc_brake::request_close()) {
     canzero_set_command(motor_command_NONE);

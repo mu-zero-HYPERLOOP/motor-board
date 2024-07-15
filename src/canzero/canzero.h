@@ -108,7 +108,7 @@ static const node_id CANZERO_NODE_ID = node_id_motor_driver;
 typedef struct {
   uint32_t id;
   uint8_t dlc;
-  uint8_t data[8];
+  __attribute__((aligned(alignof(uint64_t)))) uint8_t data[8];
 } canzero_frame;
 typedef enum : uint32_t {
   CANZERO_FRAME_IDE_BIT = 0x40000000, // 1 << 30
@@ -336,6 +336,10 @@ static inline float canzero_get_vdc_voltage() {
   extern float __oe_vdc_voltage;
   return __oe_vdc_voltage;
 }
+static inline error_flag canzero_get_error_vdc_voltage_invalid() {
+  extern error_flag __oe_error_vdc_voltage_invalid;
+  return __oe_error_vdc_voltage_invalid;
+}
 static inline error_level_config canzero_get_error_level_config_vdc_voltage() {
   extern error_level_config __oe_error_level_config_vdc_voltage;
   return __oe_error_level_config_vdc_voltage;
@@ -424,11 +428,11 @@ typedef struct {
   get_resp_header m_header;
   uint32_t m_data;
 } canzero_message_get_resp;
-static const uint32_t canzero_message_get_resp_id = 0x19D;
+static const uint32_t canzero_message_get_resp_id = 0x1BD;
 typedef struct {
   set_resp_header m_header;
 } canzero_message_set_resp;
-static const uint32_t canzero_message_set_resp_id = 0x1BD;
+static const uint32_t canzero_message_set_resp_id = 0x1DD;
 typedef struct {
   motor_state m_state;
   sdc_status m_sdc_status;
@@ -437,11 +441,11 @@ typedef struct {
   sdc_status m_precharge_status;
   sdc_status m_feedthrough_status;
 } canzero_message_motor_driver_stream_state;
-static const uint32_t canzero_message_motor_driver_stream_state_id = 0xB5;
+static const uint32_t canzero_message_motor_driver_stream_state_id = 0x95;
 typedef struct {
   uint64_t m_config_hash;
 } canzero_message_motor_driver_stream_config_hash;
-static const uint32_t canzero_message_motor_driver_stream_config_hash_id = 0x75;
+static const uint32_t canzero_message_motor_driver_stream_config_hash_id = 0x55;
 typedef struct {
   error_flag m_assertion_fault;
   error_flag m_error_arming_failed;
@@ -468,34 +472,35 @@ typedef struct {
   error_level m_error_level_board_temperature;
   error_level m_error_level_mcu_temperature;
   error_level m_error_level_lim_temperature;
+  error_flag m_error_vdc_voltage_invalid;
   uint8_t m_last_node_missed;
 } canzero_message_motor_driver_stream_errors;
-static const uint32_t canzero_message_motor_driver_stream_errors_id = 0x95;
+static const uint32_t canzero_message_motor_driver_stream_errors_id = 0x75;
 typedef struct {
   float m_loop_frequency;
 } canzero_message_motor_driver_stream_debug;
-static const uint32_t canzero_message_motor_driver_stream_debug_id = 0xF9;
+static const uint32_t canzero_message_motor_driver_stream_debug_id = 0x99;
 typedef struct {
   float m_current_u1;
   float m_current_v1;
   float m_current_w1;
   float m_current_max;
 } canzero_message_motor_driver_stream_currents_u1v1w1;
-static const uint32_t canzero_message_motor_driver_stream_currents_u1v1w1_id = 0xD9;
+static const uint32_t canzero_message_motor_driver_stream_currents_u1v1w1_id = 0x79;
 typedef struct {
   float m_current_u2;
   float m_current_v2;
   float m_current_w2;
   float m_current_average;
 } canzero_message_motor_driver_stream_current_u2v2w2;
-static const uint32_t canzero_message_motor_driver_stream_current_u2v2w2_id = 0xB9;
+static const uint32_t canzero_message_motor_driver_stream_current_u2v2w2_id = 0x59;
 typedef struct {
   float m_frequency;
   float m_modulation_index;
   float m_acceleration;
   float m_vdc_voltage;
 } canzero_message_motor_driver_stream_control_info;
-static const uint32_t canzero_message_motor_driver_stream_control_info_id = 0x99;
+static const uint32_t canzero_message_motor_driver_stream_control_info_id = 0x19A;
 typedef struct {
   float m_board_temperature1;
   float m_board_temperature2;
@@ -505,7 +510,7 @@ typedef struct {
   float m_board_min_temperature;
   float m_mcu_temperature;
 } canzero_message_motor_driver_stream_board_temperature;
-static const uint32_t canzero_message_motor_driver_stream_board_temperature_id = 0x79;
+static const uint32_t canzero_message_motor_driver_stream_board_temperature_id = 0x17A;
 typedef struct {
   float m_lim_temperature1;
   float m_lim_temperature2;
@@ -515,28 +520,28 @@ typedef struct {
   float m_lim_max_temperature;
   float m_lim_min_temperature;
 } canzero_message_motor_driver_stream_lim_temperature;
-static const uint32_t canzero_message_motor_driver_stream_lim_temperature_id = 0x119;
+static const uint32_t canzero_message_motor_driver_stream_lim_temperature_id = 0xB9;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can0;
-static const uint32_t canzero_message_heartbeat_can0_id = 0x1D4;
+static const uint32_t canzero_message_heartbeat_can0_id = 0x1F4;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can1;
-static const uint32_t canzero_message_heartbeat_can1_id = 0x1D3;
+static const uint32_t canzero_message_heartbeat_can1_id = 0x1F3;
 typedef struct {
   get_req_header m_header;
 } canzero_message_get_req;
-static const uint32_t canzero_message_get_req_id = 0x19E;
+static const uint32_t canzero_message_get_req_id = 0x1BE;
 typedef struct {
   set_req_header m_header;
   uint32_t m_data;
 } canzero_message_set_req;
-static const uint32_t canzero_message_set_req_id = 0x1BE;
+static const uint32_t canzero_message_set_req_id = 0x1DE;
 typedef struct {
   float m_target_acceleration;
   motor_command m_motor_driver_command;
@@ -714,6 +719,8 @@ static inline void canzero_set_vdc_voltage(float value){
   extern float __oe_vdc_voltage;
   __oe_vdc_voltage = value;
 }
+
+void canzero_set_error_vdc_voltage_invalid(error_flag value);
 
 static inline void canzero_set_error_level_config_vdc_voltage(error_level_config value){
   extern error_level_config __oe_error_level_config_vdc_voltage;
@@ -920,6 +927,8 @@ void canzero_send_external_velocity();
 void canzero_send_external_position();
 
 void canzero_send_vdc_voltage();
+
+void canzero_send_error_vdc_voltage_invalid();
 
 void canzero_send_error_level_config_vdc_voltage();
 
