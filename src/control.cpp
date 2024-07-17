@@ -3,8 +3,8 @@
 #include "util/lina.h"
 #include <cmath>
 
-static Frequency rotational_frequency = 1_Hz;
-static float modulation_index = 0.5;
+static Frequency rotational_frequency = 20_Hz;
+static float modulation_index = 0.2;
 
 static float theta = 0.0f;
 
@@ -25,25 +25,20 @@ MotorPwmControl control::control_loop(Voltage vdc) {
     theta += TWO_PI;
   }
 
-  /* const complex u = complex::from_polar(modulation_index * sqrt3over2 / 2.0f, theta); */
-  complex u = complex(0,0);
+  const complex u = complex::from_polar(modulation_index * sqrt3over2 / 2.0f, theta);
 
   // Clark transformation
   float u_u = u.r();
   float u_v = -0.5 * u.r() + sqrt3over2 * u.im();
   float u_w = -0.5 * u.r() - sqrt3over2 * u.im();
-  
-  float control_u1 = 0.5 + u_u / 2.0f;
-  float control_v1 = 0.5 + u_v / 2.0f;
-  float control_w1 = 0.5 + u_w / 2.0f;
 
   MotorPwmControl control;
-  control.U1_duty = control_u1;
-  control.V1_duty = control_v1;
-  control.W1_duty = control_w1;
-  control.W2_duty = control_u1;
-  control.V2_duty = control_v1;
-  control.U2_duty = control_w1;
+  control.U1_duty = 0.5 + u_u / 1.0f;
+  control.V1_duty = 0.5 + u_v / 1.0f;
+  control.W1_duty = 0.5 + u_w / 1.0f;
+  control.U2_duty = 0.5 - u_u / 1.0f;
+  control.V2_duty = 0.5 - u_v / 1.0f;
+  control.W2_duty = 0.5 - u_w / 1.0f;
   return control;
 }
 
