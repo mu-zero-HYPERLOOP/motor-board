@@ -1,5 +1,6 @@
 #include "canzero/canzero.h"
 #include "feedthrough_mosfet.h"
+#include "firmware/motor_pwm.h"
 #include "fsm/states.h"
 #include "precharge_mosfet.h"
 #include "sdc_brake.h"
@@ -16,15 +17,8 @@ motor_state fsm::states::ready(motor_command cmd,
   }
 
   
-  pwm::disable_trig1();
-  PwmControl control;
-  control.duty13 = 0.0f;
-  control.duty20 = 0.0f;
-  control.duty22 = 0.0f;
-  control.duty23 = 0.0f;
-  control.duty31 = 0.0f;
-  control.duty42 = 0.0f;
-  pwm::control(control);
+  pwm::enable_output();
+  pwm::control(MotorPwmControl());
   pwm::enable_output();
 
   if (!sdc_brake::request_close()) {
