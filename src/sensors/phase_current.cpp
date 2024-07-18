@@ -191,7 +191,10 @@ Current sensors::phase_current::convert_u2(Voltage v) {
   return sensors::formula::current_sense(v, CURRENT_SENSE_GAIN, 0.2_mOhm);
 }
 
+static Timestamp ready_current_ok = Timestamp::now();
+
 void sensors::phase_current::update() {
+  
   float umax = std::max(canzero_get_current_u1(), canzero_get_current_u2());
   float vmax = std::max(canzero_get_current_v1(), canzero_get_current_v2());
   float wmax = std::max(canzero_get_current_w1(), canzero_get_current_w2());
@@ -202,6 +205,17 @@ void sensors::phase_current::update() {
 
   canzero_set_current_max(std::max(umax, std::max(vmax, wmax)));
   canzero_set_current_average((uavg + vavg + wavg) / 3.0f);
+
+  if (canzero_get_state() == motor_state_READY){
+    const auto now = Timestamp::now();
+    if (canzero_get_current_max() < 20){
+      ready_current_ok = now;
+    }
+    if (now - ready_current_ok > 1_s){
+      canzero_set_error_phase_current_unexpected(error_flag_ERROR);
+    }
+  }
+
 
   v1_current_check.check();
   w1_current_check.check();
