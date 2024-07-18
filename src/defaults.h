@@ -22,6 +22,8 @@ static void can_defaults() {
   canzero_set_error_invalid_target_acceleration(error_flag_OK);
   canzero_set_error_acceleration_calibration_failed(error_flag_OK);
   canzero_set_error_vdc_voltage_invalid(error_flag_OK);
+  canzero_set_error_phase_current_unexpected(error_flag_ERROR);
+  canzero_set_error_sdc_brake(error_flag_OK);
 
   canzero_set_error_level_current_u1(error_level_OK);
   canzero_set_error_level_current_u2(error_level_OK);
@@ -34,7 +36,6 @@ static void can_defaults() {
   canzero_set_error_level_mcu_temperature(error_level_OK);
   canzero_set_error_level_board_temperature(error_level_OK);
 
-  canzero_set_error_phase_current_unexpected(error_flag_ERROR);
 
   canzero_set_ignore_45v(bool_t_FALSE);
 }
