@@ -25,7 +25,8 @@ MotorPwmControl control::control_loop(Voltage vdc) {
     theta += TWO_PI;
   }
 
-  const complex u = complex::from_polar(modulation_index * sqrt3over2 / 2.0f, theta);
+  /* const complex u = complex::from_polar(modulation_index * sqrt3over2 / 2.0f, theta); */
+  const complex u = complex(0,0);
 
   // Clark transformation
   float u_u = u.r();
