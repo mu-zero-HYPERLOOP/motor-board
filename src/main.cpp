@@ -7,7 +7,6 @@
 #include "pwm_config.h"
 #include "sdc_brake.h"
 #include "xbar_config.h"
-#include "util/timing.h"
 #include "print.h"
 #include <cstdio>
 
