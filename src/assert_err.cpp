@@ -8,9 +8,6 @@
  */
 void __assert_func(const char *filename, int line, const char *assert_func,
                    const char *expr) {
-  canzero_set_assertion_fault(error_flag_ERROR);
-  canzero_update_continue(canzero_get_time());
-
   pwm::disable_trig0();
   pwm::disable_trig1();
 
@@ -20,6 +17,5 @@ void __assert_func(const char *filename, int line, const char *assert_func,
   while (true) {
     pwm::control(PwmControl());
     pwm::enable_output();
-    canzero_update_continue(canzero_get_time());
   }
 }

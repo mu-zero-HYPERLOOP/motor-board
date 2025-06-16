@@ -15,6 +15,7 @@ void control::begin() {
 }
 
 
+// TODO vdc measurement is not implemented see adc_isr::adc_etc_done0_isr
 MotorPwmControl control::control_loop(Voltage vdc) {
   
   theta += rotational_frequency * TWO_PI / pwm::frequency();

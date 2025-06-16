@@ -1,89 +1,69 @@
 #include "adc_config.h"
 #include "adc_isr.h"
-#include "canzero/canzero.h"
 #include "control.h"
-#include "defaults.h"
+#include "feedthrough_mosfet.h"
 #include "firmware/motor_board.h"
-#include "fsm/fsm.h"
+#include "precharge_mosfet.h"
 #include "pwm_config.h"
 #include "sdc_brake.h"
-#include "sensors/accelerometer.h"
-#include "sensors/ext_ntcs.h"
-#include "sensors/mcu_temperature.h"
-#include "sensors/on_board_ntcs.h"
-#include "sensors/phase_current.h"
-#include "sensors/vdc.h"
 #include "xbar_config.h"
 #include "util/timing.h"
 #include "print.h"
+#include <cstdio>
 
-
-static IntervalTiming mainLoopIntervalTimer;
 
 int main() {
-  canzero_init();
-
-  can_defaults();
-  fsm::begin();
-  canzero_update_continue(canzero_get_time());
-
   motor_board::begin();
-  
+  // Configure PWM
   pwm_config();
+
+  // Configure ADC
   adc_config();
+
+  // Connect PWM trig0 with ADC trig0
+  // On PWM reload start a ADC convertion
   xbar_config();
 
 
+  // Start firmware.
   sdc_brake::begin();
-
-  // Setup sensors
-  sensors::accelerometer::begin();
-  sensors::ext_ntcs::begin();
-  sensors::mcu_temperature::begin();
-  sensors::on_board_ntcs::begin();
-  sensors::phase_current::begin();
-  sensors::vdc::begin();
-
-  // Calibrate sensors
-  sensors::accelerometer::calibrate();
-  sensors::ext_ntcs::calibrate();
-
-  sensors::mcu_temperature::calibrate();
-  sensors::on_board_ntcs::calibrate();
-  sensors::phase_current::calibrate();
-  sensors::vdc::calibrate();
-
   adc_isr::begin();
   control::begin();
 
-  mainLoopIntervalTimer.reset();
+  pwm::disable_trig0();
+  pwm::disable_output();
 
-  // init -> idle
-  fsm::finish_init();
-  debugPrintFlush();
+  precharge_mosfet::open();
+  feedthrough_mosfet::open();
+
+  debugPrintf("Initalizated and waiting");
+  motor_board::delay(5_s);
+  debugPrintf("Close SDC");
+  if (!sdc_brake::request_close()) {
+    while(true) {
+      motor_board::delay(1_s);
+      debugPrintf("Failed to open SDC.");
+    }
+  }
+  debugPrintf("Start precharge");
+  precharge_mosfet::close();
+  feedthrough_mosfet::open();
+
+
+  motor_board::delay(1_s);
+  precharge_mosfet::open();
+  feedthrough_mosfet::close();
+  debugPrintf("Precharge done");
+
+  motor_board::delay(5_s);
+
+  
+  pwm::enable_trig0();
+  pwm::enable_output();
+  // see control.cpp the control_loop is executed from this point on.
+
+
   while (true) {
-    canzero_can0_poll();
-    canzero_can1_poll();
-
     motor_board::update();
-
-    sensors::accelerometer::update();
-    sensors::ext_ntcs::update();
-    sensors::mcu_temperature::update();
-    sensors::on_board_ntcs::update();
-    sensors::phase_current::update();
-    sensors::vdc::update();
-
-    adc_isr::update();
-    control::update();
-
-    sdc_brake::update();
-
-    fsm::update();
-
-    mainLoopIntervalTimer.tick();
-    canzero_set_loop_frequency(static_cast<float>(mainLoopIntervalTimer.frequency()) / 1e3);
-
-    canzero_update_continue(canzero_get_time());
   }
 }

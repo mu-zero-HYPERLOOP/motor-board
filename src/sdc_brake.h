@@ -46,7 +46,7 @@ static inline void open() {
 }
 
 inline void update(){
-  canzero_set_sdc_status(sdc_state);
+
 }
 
 } // namespace sdc_brake

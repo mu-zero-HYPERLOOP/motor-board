@@ -3,7 +3,6 @@
 #include "firmware/pinout.h"
 
 static void adc_config() {
-
   TrigChainInfo adcEtcChains[1];
   adcEtcChains[0].trig_num = TRIG0;
   ain_pin chain0_pins[] = {ain_vdc_20};
