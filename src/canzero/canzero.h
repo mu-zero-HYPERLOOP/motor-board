@@ -5,14 +5,14 @@
 #define MAX_DYN_HEARTBEATS 10
 typedef enum {
   node_id_gamepad = 0,
-  node_id_mother_board = 1,
+  node_id_telemetry_board = 1,
   node_id_motor_driver = 2,
-  node_id_guidance_board_front = 3,
-  node_id_guidance_board_back = 4,
-  node_id_levitation_board1 = 5,
-  node_id_levitation_board2 = 6,
-  node_id_levitation_board3 = 7,
-  node_id_input_board = 8,
+  node_id_input_board = 3,
+  node_id_guidance_board_front = 4,
+  node_id_guidance_board_back = 5,
+  node_id_levitation_board1 = 6,
+  node_id_levitation_board2 = 7,
+  node_id_levitation_board3 = 8,
   node_id_power_board12 = 9,
   node_id_power_board24 = 10,
   node_id_led_board = 11,
@@ -144,122 +144,6 @@ static inline sdc_status canzero_get_sdc_status() {
   extern sdc_status __oe_sdc_status;
   return __oe_sdc_status;
 }
-static inline error_flag canzero_get_assertion_fault() {
-  extern error_flag __oe_assertion_fault;
-  return __oe_assertion_fault;
-}
-static inline error_flag canzero_get_error_arming_failed() {
-  extern error_flag __oe_error_arming_failed;
-  return __oe_error_arming_failed;
-}
-static inline error_flag canzero_get_error_precharge_failed() {
-  extern error_flag __oe_error_precharge_failed;
-  return __oe_error_precharge_failed;
-}
-static inline error_flag canzero_get_error_acceleration_out_of_range() {
-  extern error_flag __oe_error_acceleration_out_of_range;
-  return __oe_error_acceleration_out_of_range;
-}
-static inline error_flag canzero_get_error_acceleration_calibration_failed() {
-  extern error_flag __oe_error_acceleration_calibration_failed;
-  return __oe_error_acceleration_calibration_failed;
-}
-static inline error_flag canzero_get_error_invalid_target_acceleration() {
-  extern error_flag __oe_error_invalid_target_acceleration;
-  return __oe_error_invalid_target_acceleration;
-}
-static inline error_flag canzero_get_error_vdc_voltage_invalid() {
-  extern error_flag __oe_error_vdc_voltage_invalid;
-  return __oe_error_vdc_voltage_invalid;
-}
-static inline error_flag canzero_get_error_board_temperature1_invalid() {
-  extern error_flag __oe_error_board_temperature1_invalid;
-  return __oe_error_board_temperature1_invalid;
-}
-static inline error_flag canzero_get_error_board_temperature2_invalid() {
-  extern error_flag __oe_error_board_temperature2_invalid;
-  return __oe_error_board_temperature2_invalid;
-}
-static inline error_flag canzero_get_error_board_temperature3_invalid() {
-  extern error_flag __oe_error_board_temperature3_invalid;
-  return __oe_error_board_temperature3_invalid;
-}
-static inline error_flag canzero_get_error_mcu_temperature_invalid() {
-  extern error_flag __oe_error_mcu_temperature_invalid;
-  return __oe_error_mcu_temperature_invalid;
-}
-static inline error_flag canzero_get_error_lim_temperature1_invalid() {
-  extern error_flag __oe_error_lim_temperature1_invalid;
-  return __oe_error_lim_temperature1_invalid;
-}
-static inline error_flag canzero_get_error_lim_temperature2_invalid() {
-  extern error_flag __oe_error_lim_temperature2_invalid;
-  return __oe_error_lim_temperature2_invalid;
-}
-static inline error_flag canzero_get_error_lim_temperature3_invalid() {
-  extern error_flag __oe_error_lim_temperature3_invalid;
-  return __oe_error_lim_temperature3_invalid;
-}
-static inline error_flag canzero_get_error_lim_temperature4_invalid() {
-  extern error_flag __oe_error_lim_temperature4_invalid;
-  return __oe_error_lim_temperature4_invalid;
-}
-static inline error_flag canzero_get_error_heartbeat_miss() {
-  extern error_flag __oe_error_heartbeat_miss;
-  return __oe_error_heartbeat_miss;
-}
-static inline error_flag canzero_get_error_phase_current_unexpected() {
-  extern error_flag __oe_error_phase_current_unexpected;
-  return __oe_error_phase_current_unexpected;
-}
-static inline error_flag canzero_get_error_sdc_brake() {
-  extern error_flag __oe_error_sdc_brake;
-  return __oe_error_sdc_brake;
-}
-static inline error_level canzero_get_error_level_current_u1() {
-  extern error_level __oe_error_level_current_u1;
-  return __oe_error_level_current_u1;
-}
-static inline error_level canzero_get_error_level_current_v1() {
-  extern error_level __oe_error_level_current_v1;
-  return __oe_error_level_current_v1;
-}
-static inline error_level canzero_get_error_level_current_w1() {
-  extern error_level __oe_error_level_current_w1;
-  return __oe_error_level_current_w1;
-}
-static inline error_level canzero_get_error_level_current_u2() {
-  extern error_level __oe_error_level_current_u2;
-  return __oe_error_level_current_u2;
-}
-static inline error_level canzero_get_error_level_current_v2() {
-  extern error_level __oe_error_level_current_v2;
-  return __oe_error_level_current_v2;
-}
-static inline error_level canzero_get_error_level_current_w2() {
-  extern error_level __oe_error_level_current_w2;
-  return __oe_error_level_current_w2;
-}
-static inline error_level canzero_get_error_level_vdc_voltage() {
-  extern error_level __oe_error_level_vdc_voltage;
-  return __oe_error_level_vdc_voltage;
-}
-static inline error_level canzero_get_error_level_board_temperature() {
-  extern error_level __oe_error_level_board_temperature;
-  return __oe_error_level_board_temperature;
-}
-static inline error_level canzero_get_error_level_mcu_temperature() {
-  extern error_level __oe_error_level_mcu_temperature;
-  return __oe_error_level_mcu_temperature;
-}
-static inline error_level canzero_get_error_level_lim_temperature() {
-  extern error_level __oe_error_level_lim_temperature;
-  return __oe_error_level_lim_temperature;
-}
-static inline error_flag canzero_get_phase_current_unexpected() {
-  extern error_flag __oe_phase_current_unexpected;
-  return __oe_phase_current_unexpected;
-}
 static inline sdc_status canzero_get_precharge_status() {
   extern sdc_status __oe_precharge_status;
   return __oe_precharge_status;
@@ -275,6 +159,14 @@ static inline motor_command canzero_get_command() {
 static inline bool_t canzero_get_control_active() {
   extern bool_t __oe_control_active;
   return __oe_control_active;
+}
+static inline error_flag canzero_get_error_arming_failed() {
+  extern error_flag __oe_error_arming_failed;
+  return __oe_error_arming_failed;
+}
+static inline error_flag canzero_get_error_precharge_failed() {
+  extern error_flag __oe_error_precharge_failed;
+  return __oe_error_precharge_failed;
 }
 static inline float canzero_get_current_u1() {
   extern float __oe_current_u1;
@@ -308,9 +200,37 @@ static inline float canzero_get_current_average() {
   extern float __oe_current_average;
   return __oe_current_average;
 }
+static inline error_level canzero_get_error_level_current_u1() {
+  extern error_level __oe_error_level_current_u1;
+  return __oe_error_level_current_u1;
+}
+static inline error_level canzero_get_error_level_current_v1() {
+  extern error_level __oe_error_level_current_v1;
+  return __oe_error_level_current_v1;
+}
+static inline error_level canzero_get_error_level_current_w1() {
+  extern error_level __oe_error_level_current_w1;
+  return __oe_error_level_current_w1;
+}
+static inline error_level canzero_get_error_level_current_u2() {
+  extern error_level __oe_error_level_current_u2;
+  return __oe_error_level_current_u2;
+}
+static inline error_level canzero_get_error_level_current_v2() {
+  extern error_level __oe_error_level_current_v2;
+  return __oe_error_level_current_v2;
+}
+static inline error_level canzero_get_error_level_current_w2() {
+  extern error_level __oe_error_level_current_w2;
+  return __oe_error_level_current_w2;
+}
 static inline error_level_config canzero_get_error_level_config_current_phase() {
   extern error_level_config __oe_error_level_config_current_phase;
   return __oe_error_level_config_current_phase;
+}
+static inline error_flag canzero_get_error_phase_current_unexpected() {
+  extern error_flag __oe_error_phase_current_unexpected;
+  return __oe_error_phase_current_unexpected;
 }
 static inline float canzero_get_frequency() {
   extern float __oe_frequency;
@@ -332,9 +252,21 @@ static inline double canzero_get_acceleration_calibration_offset() {
   extern double __oe_acceleration_calibration_offset;
   return __oe_acceleration_calibration_offset;
 }
+static inline error_flag canzero_get_error_acceleration_out_of_range() {
+  extern error_flag __oe_error_acceleration_out_of_range;
+  return __oe_error_acceleration_out_of_range;
+}
+static inline error_flag canzero_get_error_acceleration_calibration_failed() {
+  extern error_flag __oe_error_acceleration_calibration_failed;
+  return __oe_error_acceleration_calibration_failed;
+}
 static inline float canzero_get_target_acceleration() {
   extern float __oe_target_acceleration;
   return __oe_target_acceleration;
+}
+static inline error_flag canzero_get_error_invalid_target_acceleration() {
+  extern error_flag __oe_error_invalid_target_acceleration;
+  return __oe_error_invalid_target_acceleration;
 }
 static inline float canzero_get_external_acceleration() {
   extern float __oe_external_acceleration;
@@ -351,6 +283,14 @@ static inline float canzero_get_external_position() {
 static inline float canzero_get_vdc_voltage() {
   extern float __oe_vdc_voltage;
   return __oe_vdc_voltage;
+}
+static inline error_flag canzero_get_error_vdc_voltage_invalid() {
+  extern error_flag __oe_error_vdc_voltage_invalid;
+  return __oe_error_vdc_voltage_invalid;
+}
+static inline error_level canzero_get_error_level_vdc_voltage() {
+  extern error_level __oe_error_level_vdc_voltage;
+  return __oe_error_level_vdc_voltage;
 }
 static inline error_level_config canzero_get_error_level_config_vdc_voltage() {
   extern error_level_config __oe_error_level_config_vdc_voltage;
@@ -380,6 +320,22 @@ static inline float canzero_get_board_min_temperature() {
   extern float __oe_board_min_temperature;
   return __oe_board_min_temperature;
 }
+static inline error_flag canzero_get_error_board_temperature1_invalid() {
+  extern error_flag __oe_error_board_temperature1_invalid;
+  return __oe_error_board_temperature1_invalid;
+}
+static inline error_flag canzero_get_error_board_temperature2_invalid() {
+  extern error_flag __oe_error_board_temperature2_invalid;
+  return __oe_error_board_temperature2_invalid;
+}
+static inline error_flag canzero_get_error_board_temperature3_invalid() {
+  extern error_flag __oe_error_board_temperature3_invalid;
+  return __oe_error_board_temperature3_invalid;
+}
+static inline error_level canzero_get_error_level_board_temperature() {
+  extern error_level __oe_error_level_board_temperature;
+  return __oe_error_level_board_temperature;
+}
 static inline error_level_config canzero_get_error_level_config_board_temperature() {
   extern error_level_config __oe_error_level_config_board_temperature;
   return __oe_error_level_config_board_temperature;
@@ -387,6 +343,14 @@ static inline error_level_config canzero_get_error_level_config_board_temperatur
 static inline float canzero_get_mcu_temperature() {
   extern float __oe_mcu_temperature;
   return __oe_mcu_temperature;
+}
+static inline error_flag canzero_get_error_mcu_temperature_invalid() {
+  extern error_flag __oe_error_mcu_temperature_invalid;
+  return __oe_error_mcu_temperature_invalid;
+}
+static inline error_level canzero_get_error_level_mcu_temperature() {
+  extern error_level __oe_error_level_mcu_temperature;
+  return __oe_error_level_mcu_temperature;
 }
 static inline error_level_config canzero_get_error_level_config_mcu_temperature() {
   extern error_level_config __oe_error_level_config_mcu_temperature;
@@ -420,6 +384,26 @@ static inline float canzero_get_lim_min_temperature() {
   extern float __oe_lim_min_temperature;
   return __oe_lim_min_temperature;
 }
+static inline error_flag canzero_get_error_lim_temperature1_invalid() {
+  extern error_flag __oe_error_lim_temperature1_invalid;
+  return __oe_error_lim_temperature1_invalid;
+}
+static inline error_flag canzero_get_error_lim_temperature2_invalid() {
+  extern error_flag __oe_error_lim_temperature2_invalid;
+  return __oe_error_lim_temperature2_invalid;
+}
+static inline error_flag canzero_get_error_lim_temperature3_invalid() {
+  extern error_flag __oe_error_lim_temperature3_invalid;
+  return __oe_error_lim_temperature3_invalid;
+}
+static inline error_flag canzero_get_error_lim_temperature4_invalid() {
+  extern error_flag __oe_error_lim_temperature4_invalid;
+  return __oe_error_lim_temperature4_invalid;
+}
+static inline error_level canzero_get_error_level_lim_temperature() {
+  extern error_level __oe_error_level_lim_temperature;
+  return __oe_error_level_lim_temperature;
+}
 static inline error_level_config canzero_get_error_level_config_lim_temperature() {
   extern error_level_config __oe_error_level_config_lim_temperature;
   return __oe_error_level_config_lim_temperature;
@@ -427,6 +411,18 @@ static inline error_level_config canzero_get_error_level_config_lim_temperature(
 static inline float canzero_get_loop_frequency() {
   extern float __oe_loop_frequency;
   return __oe_loop_frequency;
+}
+static inline error_flag canzero_get_assertion_fault() {
+  extern error_flag __oe_assertion_fault;
+  return __oe_assertion_fault;
+}
+static inline error_flag canzero_get_error_heartbeat_miss() {
+  extern error_flag __oe_error_heartbeat_miss;
+  return __oe_error_heartbeat_miss;
+}
+static inline error_flag canzero_get_error_sdc_brake() {
+  extern error_flag __oe_error_sdc_brake;
+  return __oe_error_sdc_brake;
 }
 static inline uint8_t canzero_get_last_node_missed() {
   extern uint8_t __oe_last_node_missed;
@@ -436,28 +432,73 @@ static inline bool_t canzero_get_ignore_45v() {
   extern bool_t __oe_ignore_45v;
   return __oe_ignore_45v;
 }
+static inline error_flag canzero_get_phase_current_unexpected() {
+  extern error_flag __oe_phase_current_unexpected;
+  return __oe_phase_current_unexpected;
+}
 typedef struct {
   get_resp_header m_header;
   uint32_t m_data;
 } canzero_message_get_resp;
-static const uint32_t canzero_message_get_resp_id = 0x1BD;
+static const uint32_t canzero_message_get_resp_id = 0x13D;
 typedef struct {
   set_resp_header m_header;
 } canzero_message_set_resp;
-static const uint32_t canzero_message_set_resp_id = 0x1DD;
+static const uint32_t canzero_message_set_resp_id = 0x15D;
 typedef struct {
   motor_state m_state;
-  sdc_status m_sdc_status;
   motor_command m_command;
+  sdc_status m_sdc_status;
   bool_t m_control_active;
   sdc_status m_precharge_status;
   sdc_status m_feedthrough_status;
 } canzero_message_motor_driver_stream_state;
-static const uint32_t canzero_message_motor_driver_stream_state_id = 0xB6;
+static const uint32_t canzero_message_motor_driver_stream_state_id = 0x111;
 typedef struct {
-  uint64_t m_config_hash;
-} canzero_message_motor_driver_stream_config_hash;
-static const uint32_t canzero_message_motor_driver_stream_config_hash_id = 0x76;
+  float m_loop_frequency;
+} canzero_message_motor_driver_stream_debug;
+static const uint32_t canzero_message_motor_driver_stream_debug_id = 0xB6;
+typedef struct {
+  float m_current_u1;
+  float m_current_v1;
+  float m_current_w1;
+  float m_current_max;
+} canzero_message_motor_driver_stream_currents_u1v1w1;
+static const uint32_t canzero_message_motor_driver_stream_currents_u1v1w1_id = 0x96;
+typedef struct {
+  float m_current_u2;
+  float m_current_v2;
+  float m_current_w2;
+  float m_current_average;
+} canzero_message_motor_driver_stream_current_u2v2w2;
+static const uint32_t canzero_message_motor_driver_stream_current_u2v2w2_id = 0x76;
+typedef struct {
+  float m_frequency;
+  float m_modulation_index;
+  float m_acceleration;
+  float m_vdc_voltage;
+} canzero_message_motor_driver_stream_control_info;
+static const uint32_t canzero_message_motor_driver_stream_control_info_id = 0x56;
+typedef struct {
+  float m_board_temperature1;
+  float m_board_temperature2;
+  float m_board_temperature3;
+  float m_board_avg_temperature;
+  float m_board_max_temperature;
+  float m_board_min_temperature;
+  float m_mcu_temperature;
+} canzero_message_motor_driver_stream_board_temperature;
+static const uint32_t canzero_message_motor_driver_stream_board_temperature_id = 0x117;
+typedef struct {
+  float m_lim_temperature1;
+  float m_lim_temperature2;
+  float m_lim_temperature3;
+  float m_lim_temperature4;
+  float m_lim_average_temperature;
+  float m_lim_max_temperature;
+  float m_lim_min_temperature;
+} canzero_message_motor_driver_stream_lim_temperature;
+static const uint32_t canzero_message_motor_driver_stream_lim_temperature_id = 0xD6;
 typedef struct {
   error_flag m_assertion_fault;
   error_flag m_error_arming_failed;
@@ -487,86 +528,45 @@ typedef struct {
   error_level m_error_level_board_temperature;
   error_level m_error_level_mcu_temperature;
   error_level m_error_level_lim_temperature;
-  error_flag m_phase_current_unexpected;
   uint8_t m_last_node_missed;
+  error_flag m_phase_current_unexpected;
 } canzero_message_motor_driver_stream_errors;
-static const uint32_t canzero_message_motor_driver_stream_errors_id = 0x96;
+static const uint32_t canzero_message_motor_driver_stream_errors_id = 0xF1;
 typedef struct {
-  float m_loop_frequency;
-} canzero_message_motor_driver_stream_debug;
-static const uint32_t canzero_message_motor_driver_stream_debug_id = 0x79;
-typedef struct {
-  float m_current_u1;
-  float m_current_v1;
-  float m_current_w1;
-  float m_current_max;
-} canzero_message_motor_driver_stream_currents_u1v1w1;
-static const uint32_t canzero_message_motor_driver_stream_currents_u1v1w1_id = 0x59;
-typedef struct {
-  float m_current_u2;
-  float m_current_v2;
-  float m_current_w2;
-  float m_current_average;
-} canzero_message_motor_driver_stream_current_u2v2w2;
-static const uint32_t canzero_message_motor_driver_stream_current_u2v2w2_id = 0x19A;
-typedef struct {
-  float m_frequency;
-  float m_modulation_index;
-  float m_acceleration;
-  float m_vdc_voltage;
-} canzero_message_motor_driver_stream_control_info;
-static const uint32_t canzero_message_motor_driver_stream_control_info_id = 0x17A;
-typedef struct {
-  float m_board_temperature1;
-  float m_board_temperature2;
-  float m_board_temperature3;
-  float m_board_avg_temperature;
-  float m_board_max_temperature;
-  float m_board_min_temperature;
-  float m_mcu_temperature;
-} canzero_message_motor_driver_stream_board_temperature;
-static const uint32_t canzero_message_motor_driver_stream_board_temperature_id = 0x15A;
-typedef struct {
-  float m_lim_temperature1;
-  float m_lim_temperature2;
-  float m_lim_temperature3;
-  float m_lim_temperature4;
-  float m_lim_average_temperature;
-  float m_lim_max_temperature;
-  float m_lim_min_temperature;
-} canzero_message_motor_driver_stream_lim_temperature;
-static const uint32_t canzero_message_motor_driver_stream_lim_temperature_id = 0x99;
+  uint64_t m_config_hash;
+} canzero_message_motor_driver_stream_config_hash;
+static const uint32_t canzero_message_motor_driver_stream_config_hash_id = 0xD1;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can0;
-static const uint32_t canzero_message_heartbeat_can0_id = 0x1F5;
+static const uint32_t canzero_message_heartbeat_can0_id = 0x16F;
 typedef struct {
   uint8_t m_node_id;
   uint8_t m_unregister;
   uint8_t m_ticks_next;
 } canzero_message_heartbeat_can1;
-static const uint32_t canzero_message_heartbeat_can1_id = 0x1F4;
+static const uint32_t canzero_message_heartbeat_can1_id = 0x16E;
 typedef struct {
   get_req_header m_header;
 } canzero_message_get_req;
-static const uint32_t canzero_message_get_req_id = 0x1BE;
+static const uint32_t canzero_message_get_req_id = 0x13E;
 typedef struct {
   set_req_header m_header;
   uint32_t m_data;
 } canzero_message_set_req;
-static const uint32_t canzero_message_set_req_id = 0x1DE;
+static const uint32_t canzero_message_set_req_id = 0x15E;
 typedef struct {
-  float m_target_acceleration;
   motor_command m_motor_driver_command;
+  float m_target_acceleration;
   bool_t m_pod_grounded;
-} canzero_message_mother_board_stream_motor_command;
-static const uint32_t canzero_message_mother_board_stream_motor_command_id = 0x4D;
+} canzero_message_input_board_stream_motor_command;
+static const uint32_t canzero_message_input_board_stream_motor_command_id = 0x4A;
 typedef struct {
   bool_t m_ignore_45v;
-} canzero_message_mother_board_stream_debug_settings;
-static const uint32_t canzero_message_mother_board_stream_debug_settings_id = 0x52;
+} canzero_message_input_board_stream_debug_settings;
+static const uint32_t canzero_message_input_board_stream_debug_settings_id = 0x4D;
 void canzero_can0_poll();
 void canzero_can1_poll();
 uint32_t canzero_update_continue(uint32_t delta_time);
@@ -582,64 +582,6 @@ void canzero_set_state(motor_state value);
 
 void canzero_set_sdc_status(sdc_status value);
 
-void canzero_set_assertion_fault(error_flag value);
-
-void canzero_set_error_arming_failed(error_flag value);
-
-void canzero_set_error_precharge_failed(error_flag value);
-
-void canzero_set_error_acceleration_out_of_range(error_flag value);
-
-void canzero_set_error_acceleration_calibration_failed(error_flag value);
-
-void canzero_set_error_invalid_target_acceleration(error_flag value);
-
-void canzero_set_error_vdc_voltage_invalid(error_flag value);
-
-void canzero_set_error_board_temperature1_invalid(error_flag value);
-
-void canzero_set_error_board_temperature2_invalid(error_flag value);
-
-void canzero_set_error_board_temperature3_invalid(error_flag value);
-
-void canzero_set_error_mcu_temperature_invalid(error_flag value);
-
-void canzero_set_error_lim_temperature1_invalid(error_flag value);
-
-void canzero_set_error_lim_temperature2_invalid(error_flag value);
-
-void canzero_set_error_lim_temperature3_invalid(error_flag value);
-
-void canzero_set_error_lim_temperature4_invalid(error_flag value);
-
-void canzero_set_error_heartbeat_miss(error_flag value);
-
-void canzero_set_error_phase_current_unexpected(error_flag value);
-
-void canzero_set_error_sdc_brake(error_flag value);
-
-void canzero_set_error_level_current_u1(error_level value);
-
-void canzero_set_error_level_current_v1(error_level value);
-
-void canzero_set_error_level_current_w1(error_level value);
-
-void canzero_set_error_level_current_u2(error_level value);
-
-void canzero_set_error_level_current_v2(error_level value);
-
-void canzero_set_error_level_current_w2(error_level value);
-
-void canzero_set_error_level_vdc_voltage(error_level value);
-
-void canzero_set_error_level_board_temperature(error_level value);
-
-void canzero_set_error_level_mcu_temperature(error_level value);
-
-void canzero_set_error_level_lim_temperature(error_level value);
-
-void canzero_set_phase_current_unexpected(error_flag value);
-
 void canzero_set_precharge_status(sdc_status value);
 
 void canzero_set_feedthrough_status(sdc_status value);
@@ -647,6 +589,10 @@ void canzero_set_feedthrough_status(sdc_status value);
 void canzero_set_command(motor_command value);
 
 void canzero_set_control_active(bool_t value);
+
+void canzero_set_error_arming_failed(error_flag value);
+
+void canzero_set_error_precharge_failed(error_flag value);
 
 static inline void canzero_set_current_u1(float value){
   extern float __oe_current_u1;
@@ -688,10 +634,24 @@ static inline void canzero_set_current_average(float value){
   __oe_current_average = value;
 }
 
+void canzero_set_error_level_current_u1(error_level value);
+
+void canzero_set_error_level_current_v1(error_level value);
+
+void canzero_set_error_level_current_w1(error_level value);
+
+void canzero_set_error_level_current_u2(error_level value);
+
+void canzero_set_error_level_current_v2(error_level value);
+
+void canzero_set_error_level_current_w2(error_level value);
+
 static inline void canzero_set_error_level_config_current_phase(error_level_config value){
   extern error_level_config __oe_error_level_config_current_phase;
   __oe_error_level_config_current_phase = value;
 }
+
+void canzero_set_error_phase_current_unexpected(error_flag value);
 
 static inline void canzero_set_frequency(float value){
   extern float __oe_frequency;
@@ -718,10 +678,16 @@ static inline void canzero_set_acceleration_calibration_offset(double value){
   __oe_acceleration_calibration_offset = value;
 }
 
+void canzero_set_error_acceleration_out_of_range(error_flag value);
+
+void canzero_set_error_acceleration_calibration_failed(error_flag value);
+
 static inline void canzero_set_target_acceleration(float value){
   extern float __oe_target_acceleration;
   __oe_target_acceleration = value;
 }
+
+void canzero_set_error_invalid_target_acceleration(error_flag value);
 
 static inline void canzero_set_external_acceleration(float value){
   extern float __oe_external_acceleration;
@@ -742,6 +708,10 @@ static inline void canzero_set_vdc_voltage(float value){
   extern float __oe_vdc_voltage;
   __oe_vdc_voltage = value;
 }
+
+void canzero_set_error_vdc_voltage_invalid(error_flag value);
+
+void canzero_set_error_level_vdc_voltage(error_level value);
 
 static inline void canzero_set_error_level_config_vdc_voltage(error_level_config value){
   extern error_level_config __oe_error_level_config_vdc_voltage;
@@ -778,6 +748,14 @@ static inline void canzero_set_board_min_temperature(float value){
   __oe_board_min_temperature = value;
 }
 
+void canzero_set_error_board_temperature1_invalid(error_flag value);
+
+void canzero_set_error_board_temperature2_invalid(error_flag value);
+
+void canzero_set_error_board_temperature3_invalid(error_flag value);
+
+void canzero_set_error_level_board_temperature(error_level value);
+
 static inline void canzero_set_error_level_config_board_temperature(error_level_config value){
   extern error_level_config __oe_error_level_config_board_temperature;
   __oe_error_level_config_board_temperature = value;
@@ -787,6 +765,10 @@ static inline void canzero_set_mcu_temperature(float value){
   extern float __oe_mcu_temperature;
   __oe_mcu_temperature = value;
 }
+
+void canzero_set_error_mcu_temperature_invalid(error_flag value);
+
+void canzero_set_error_level_mcu_temperature(error_level value);
 
 static inline void canzero_set_error_level_config_mcu_temperature(error_level_config value){
   extern error_level_config __oe_error_level_config_mcu_temperature;
@@ -828,6 +810,16 @@ static inline void canzero_set_lim_min_temperature(float value){
   __oe_lim_min_temperature = value;
 }
 
+void canzero_set_error_lim_temperature1_invalid(error_flag value);
+
+void canzero_set_error_lim_temperature2_invalid(error_flag value);
+
+void canzero_set_error_lim_temperature3_invalid(error_flag value);
+
+void canzero_set_error_lim_temperature4_invalid(error_flag value);
+
+void canzero_set_error_level_lim_temperature(error_level value);
+
 static inline void canzero_set_error_level_config_lim_temperature(error_level_config value){
   extern error_level_config __oe_error_level_config_lim_temperature;
   __oe_error_level_config_lim_temperature = value;
@@ -838,12 +830,20 @@ static inline void canzero_set_loop_frequency(float value){
   __oe_loop_frequency = value;
 }
 
+void canzero_set_assertion_fault(error_flag value);
+
+void canzero_set_error_heartbeat_miss(error_flag value);
+
+void canzero_set_error_sdc_brake(error_flag value);
+
 void canzero_set_last_node_missed(uint8_t value);
 
 static inline void canzero_set_ignore_45v(bool_t value){
   extern bool_t __oe_ignore_45v;
   __oe_ignore_45v = value;
 }
+
+void canzero_set_phase_current_unexpected(error_flag value);
 
 void canzero_send_config_hash();
 
@@ -853,64 +853,6 @@ void canzero_send_state();
 
 void canzero_send_sdc_status();
 
-void canzero_send_assertion_fault();
-
-void canzero_send_error_arming_failed();
-
-void canzero_send_error_precharge_failed();
-
-void canzero_send_error_acceleration_out_of_range();
-
-void canzero_send_error_acceleration_calibration_failed();
-
-void canzero_send_error_invalid_target_acceleration();
-
-void canzero_send_error_vdc_voltage_invalid();
-
-void canzero_send_error_board_temperature1_invalid();
-
-void canzero_send_error_board_temperature2_invalid();
-
-void canzero_send_error_board_temperature3_invalid();
-
-void canzero_send_error_mcu_temperature_invalid();
-
-void canzero_send_error_lim_temperature1_invalid();
-
-void canzero_send_error_lim_temperature2_invalid();
-
-void canzero_send_error_lim_temperature3_invalid();
-
-void canzero_send_error_lim_temperature4_invalid();
-
-void canzero_send_error_heartbeat_miss();
-
-void canzero_send_error_phase_current_unexpected();
-
-void canzero_send_error_sdc_brake();
-
-void canzero_send_error_level_current_u1();
-
-void canzero_send_error_level_current_v1();
-
-void canzero_send_error_level_current_w1();
-
-void canzero_send_error_level_current_u2();
-
-void canzero_send_error_level_current_v2();
-
-void canzero_send_error_level_current_w2();
-
-void canzero_send_error_level_vdc_voltage();
-
-void canzero_send_error_level_board_temperature();
-
-void canzero_send_error_level_mcu_temperature();
-
-void canzero_send_error_level_lim_temperature();
-
-void canzero_send_phase_current_unexpected();
-
 void canzero_send_precharge_status();
 
 void canzero_send_feedthrough_status();
@@ -918,6 +860,10 @@ void canzero_send_feedthrough_status();
 void canzero_send_command();
 
 void canzero_send_control_active();
+
+void canzero_send_error_arming_failed();
+
+void canzero_send_error_precharge_failed();
 
 void canzero_send_current_u1();
 
@@ -935,7 +881,21 @@ void canzero_send_current_max();
 
 void canzero_send_current_average();
 
+void canzero_send_error_level_current_u1();
+
+void canzero_send_error_level_current_v1();
+
+void canzero_send_error_level_current_w1();
+
+void canzero_send_error_level_current_u2();
+
+void canzero_send_error_level_current_v2();
+
+void canzero_send_error_level_current_w2();
+
 void canzero_send_error_level_config_current_phase();
+
+void canzero_send_error_phase_current_unexpected();
 
 void canzero_send_frequency();
 
@@ -947,7 +907,13 @@ void canzero_send_acceleration_calibration_variance();
 
 void canzero_send_acceleration_calibration_offset();
 
+void canzero_send_error_acceleration_out_of_range();
+
+void canzero_send_error_acceleration_calibration_failed();
+
 void canzero_send_target_acceleration();
+
+void canzero_send_error_invalid_target_acceleration();
 
 void canzero_send_external_acceleration();
 
@@ -956,6 +922,10 @@ void canzero_send_external_velocity();
 void canzero_send_external_position();
 
 void canzero_send_vdc_voltage();
+
+void canzero_send_error_vdc_voltage_invalid();
+
+void canzero_send_error_level_vdc_voltage();
 
 void canzero_send_error_level_config_vdc_voltage();
 
@@ -971,9 +941,21 @@ void canzero_send_board_max_temperature();
 
 void canzero_send_board_min_temperature();
 
+void canzero_send_error_board_temperature1_invalid();
+
+void canzero_send_error_board_temperature2_invalid();
+
+void canzero_send_error_board_temperature3_invalid();
+
+void canzero_send_error_level_board_temperature();
+
 void canzero_send_error_level_config_board_temperature();
 
 void canzero_send_mcu_temperature();
+
+void canzero_send_error_mcu_temperature_invalid();
+
+void canzero_send_error_level_mcu_temperature();
 
 void canzero_send_error_level_config_mcu_temperature();
 
@@ -991,12 +973,30 @@ void canzero_send_lim_max_temperature();
 
 void canzero_send_lim_min_temperature();
 
+void canzero_send_error_lim_temperature1_invalid();
+
+void canzero_send_error_lim_temperature2_invalid();
+
+void canzero_send_error_lim_temperature3_invalid();
+
+void canzero_send_error_lim_temperature4_invalid();
+
+void canzero_send_error_level_lim_temperature();
+
 void canzero_send_error_level_config_lim_temperature();
 
 void canzero_send_loop_frequency();
 
+void canzero_send_assertion_fault();
+
+void canzero_send_error_heartbeat_miss();
+
+void canzero_send_error_sdc_brake();
+
 void canzero_send_last_node_missed();
 
 void canzero_send_ignore_45v();
+
+void canzero_send_phase_current_unexpected();
 
 #endif

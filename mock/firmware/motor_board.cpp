@@ -70,9 +70,9 @@ Voltage motor_board::sync_read(ain_pin pin) {
     case 7: {
       const Temperature mock = 24_Celcius;
       std::normal_distribution mockDist{static_cast<float>(mock), 0.5f};
-      const Resistance r = sensors::formula::inv_ptxx(
-          Temperature(mockDist(gen)), sensors::ext_ntcs::PT_R0,
-          sensors::ext_ntcs::PT_ALPHA);
+      const Resistance r = sensors::formula::inv_ntc_beta(
+          Temperature(mockDist(gen)), sensors::ext_ntcs::NTC_BETA,
+          sensors::ext_ntcs::NTC_R_REF, sensors::ext_ntcs::NTC_T_REF);
       const Voltage v = sensors::formula::vout_of_voltage_divider(
           5_V, r, sensors::ext_ntcs::R_MEAS);
       std::normal_distribution dist{static_cast<float>(v), 0.001f};
@@ -129,6 +129,7 @@ Voltage motor_board::sync_read(ain_pin pin) {
     return Voltage(dist(gen));
   }
   }
+  return Voltage(0_V);
 }
 
 Voltage motor_board::sync_read(mux_pin pin) {

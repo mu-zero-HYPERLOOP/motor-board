@@ -1,6 +1,7 @@
 #pragma once
 
 #include "util/metrics.h"
+
 namespace sensors::ext_ntcs {
 
 constexpr Frequency MEAS_FREQUENCY = 100_Hz;
