@@ -2,8 +2,9 @@
 #include "firmware/motor_pwm.h"
 #include "util/lina.h"
 #include <cmath>
+#include "print.h"
 
-static Frequency rotational_frequency = 1_Hz;
+static Frequency rotational_frequency = 20_kHz;
 static float modulation_index = 0.5;
 
 static float theta = 0.0f;
@@ -41,6 +42,7 @@ MotorPwmControl control::control_loop(Voltage vdc) {
   control.V2_duty = 0.5 - u_v / 1.0f;
   control.W2_duty = 0.5 - u_w / 1.0f;
   return control;
+
 }
 
 void control::update() {

@@ -56,13 +56,22 @@ int main() {
 
   motor_board::delay(5_s);
 
-  
+  debugPrintf("Step 1");
   pwm::enable_trig0();
+  debugPrintf("Step 2");
   pwm::enable_output();
+  debugPrintf("Step 3");
+  // control::control_loop;
+  debugPrintf("Step 4");
+  control::update;
+  debugPrintf("Step 5");
   // see control.cpp the control_loop is executed from this point on.
 
 
   while (true) {
     motor_board::update();
+    control::control_loop;
+    control::update;
+    debugPrintf("Step 6\n");
   }
 }
