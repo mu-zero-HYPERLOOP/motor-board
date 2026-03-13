@@ -75,3 +75,4 @@ int main() {
     debugPrintf("Step 6\n");
   }
 }
+// branch check: test-benchod
