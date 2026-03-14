@@ -63,15 +63,15 @@ int main() {
   debugPrintf("Step 3");
   // control::control_loop;
   debugPrintf("Step 4");
-  control::update;
+  control::update();
   debugPrintf("Step 5");
   // see control.cpp the control_loop is executed from this point on.
 
 
   while (true) {
     motor_board::update();
-    control::control_loop;
-    control::update;
+    control::control_loop(30_V);
+    control::update();
     debugPrintf("Step 6\n");
   }
 }
