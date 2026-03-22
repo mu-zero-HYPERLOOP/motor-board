@@ -32,12 +32,22 @@ constexpr Frequency my_pwm_freq = 20_kHz;
 volatile Frequency rotational_freq = 32_Hz;
 float modulation_index = 0.6;
 
+// Start at zero!
+// volatile Frequency rotational_freq = 0_Hz;
+// float modulation_index = 0.0; 
+
+// Define our targets and ramp rates
+//constexpr float TARGET_MOD_INDEX = 0.6;
+//constexpr Frequency TARGET_FREQ = 32_Hz;
+//constexpr float RAMP_STEP_MOD = 0.01; 
+//constexpr Frequency RAMP_STEP_FREQ = 0.5_Hz;
+
 int main_counter = 0;
 
 
 void adc_etc_done0_isr(AdcTrigRes res) {
   if(modulation_index > 0.8) {
-    modulation_index = 0;
+    modulation_index = 0.6;
   }
   if(!error_flag) {
     imeas_w2_0 = res.trig_res<0, 0>();
@@ -178,7 +188,7 @@ int main() {
   
 
   /* Accelerometer::begin(); */
-
+  // OG while loop Code
   while (true) {
     // low priority software read!
 
@@ -188,7 +198,7 @@ int main() {
       mux_readings[sel] = mux_read_blocking(sel);
     }
 
-    /* const auto& [x,y,z] = Accelerometer::read_float_blocking(); */
+    //  const auto& [x,y,z] = Accelerometer::read_float_blocking(); 
 
     // rotational_freq = rotational_freq + 0.5_Hz;
     Serial.printf("freq: %f  -  i_bat: %f \n", static_cast<float>(rotational_freq), imeas_bat);
@@ -201,5 +211,34 @@ int main() {
     main_counter++;
 
     delay(100);
-  }
+  } 
+  
+ /*Gemini Code
+  while (true) {
+    uint16_t mux_readings[8];
+    for (uint8_t sel = 0; sel < 8; sel++) {
+      mux_readings[sel] = mux_read_blocking(sel);
+    }
+
+    Serial.printf("freq: %f  -  i_bat: %f \n", static_cast<float>(rotational_freq), imeas_bat);
+
+    // Ramp up logic (executes roughly every 100ms)
+    if(main_counter > 10) { // Check every ~1 second (10 * 100ms)
+      
+      // Gently ramp the frequency
+      if (rotational_freq < TARGET_FREQ) {
+          rotational_freq = rotational_freq + RAMP_STEP_FREQ;
+      }
+      
+      // Gently ramp the voltage (modulation index)
+      if (modulation_index < TARGET_MOD_INDEX) {
+          modulation_index += RAMP_STEP_MOD;
+      }
+      
+      main_counter = 0;
+    }
+
+    main_counter++;
+    delay(100);
+  }*/
 }
