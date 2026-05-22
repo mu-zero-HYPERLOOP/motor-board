@@ -3,6 +3,8 @@
 #include "control.h"
 #include "feedthrough_mosfet.h"
 #include "firmware/motor_board.h"
+#include "firmware/motor_pwm.h"
+#include "firmware/pwm.h"
 #include "precharge_mosfet.h"
 #include "pwm_config.h"
 #include "sdc_brake.h"
@@ -70,7 +72,8 @@ int main() {
 
   while (true) {
     motor_board::update();
-    control::control_loop(30_V);
+    MotorPwmControl pwm_ctrl = control::control_loop(30_V);
+    pwm::control(pwm_ctrl);  // Apply calculated duty cycles to PWM hardware
     control::update();
     debugPrintf("Step 6\n");
   }
