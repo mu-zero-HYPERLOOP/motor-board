@@ -71,11 +71,17 @@ int main() {
 
 
   while (true) {
-    motor_board::update();
-    MotorPwmControl pwm_ctrl = control::control_loop(30_V);
+    /*
+    MotorPwmControl pwm_ctrl = control::control_loop(45_V);
     pwm::control(pwm_ctrl);  // Apply calculated duty cycles to PWM hardware
+    */
+    motor_board::update();
+    MotorPwmControl pwm_control = control::control_loop(45_V);
+    pwm::control(pwm_control);  // Apply calculated duty cycles to PWM hardware
+    
     control::update();
-    debugPrintf("Step 6\n");
+    debugPrintf("Control Active: Waiting in main loop...\n");
+    // motor_board::delay(0.01_s);
   }
 }
 // git branch check: testing-sv

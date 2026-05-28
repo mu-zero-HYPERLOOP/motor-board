@@ -1,4 +1,4 @@
-/**
+/*
  * @file control.cpp
  * @brief Open-loop V/f control for Double-sided Linear Induction Motor (DLIM)
  *
@@ -38,7 +38,7 @@
 static constexpr float PHASE_OFFSET_DEG = 90.0f;
 
 /** Frequency at which V/f ratio reaches VF_MOD_IDX_AT_BASE [Hz]. */
-static constexpr float VF_BASE_FREQ_HZ = 25.0f;
+static constexpr float VF_BASE_FREQ_HZ = 5.0f;
 
 /** Modulation index at base frequency.
  *  At 25 Hz, m=0.5 → I_peak ≈ (0.5 × 36.7 V) / 2.12 Ω ≈ 8.6 A  (safe).
@@ -143,12 +143,12 @@ MotorPwmControl control::control_loop(Voltage vdc) {
 
     // ── 6. Duty cycles  (center-aligned: 0.5 ± m/2) ──────────────────────────
     MotorPwmControl ctrl;
-    ctrl.U1_duty = 0.501f + 0.499f * u1_ref;
-    ctrl.V1_duty = 0.501f + 0.499f * v1_ref;
-    ctrl.W1_duty = 0.501f + 0.499f * w1_ref;
-    ctrl.U2_duty = 0.501f + 0.499f * u2_ref;
-    ctrl.V2_duty = 0.501f + 0.499f * v2_ref;
-    ctrl.W2_duty = 0.501f + 0.499f * w2_ref;
+    ctrl.U1_duty = 0.499f + 0.499f * u1_ref;
+    ctrl.V1_duty = 0.499f + 0.499f * v1_ref;
+    ctrl.W1_duty = 0.499f + 0.499f * w1_ref;
+    ctrl.U2_duty = 0.499f + 0.499f * u2_ref;
+    ctrl.V2_duty = 0.499f + 0.499f * v2_ref;
+    ctrl.W2_duty = 0.499f + 0.499f * w2_ref;
 
     return ctrl;
 }
@@ -162,12 +162,12 @@ MotorPwmControl control::control_loop(Voltage vdc) {
 void control::update() {
     // Set testbench setpoints → ISR-readable variables.
     s_target_freq_hz = clampf(
-        20.0f,  // Fixed 20 Hz frequency for testbench
+        5.0f,  // Fixed 5 Hz frequency for testbench
         -VF_BASE_FREQ_HZ * 3.0f,
          VF_BASE_FREQ_HZ * 3.0f
     );
     s_target_mod_idx = clampf(
-        0.2f,  // Fixed 0.2 modulation index for testbench
+        0.2f,  // Fixed 0.2 modulation index for testbench --- can be increased with caution, but watch current limit!
         0.0f,
         MOD_IDX_MAX
     );
