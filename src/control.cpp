@@ -35,7 +35,7 @@
  *  90° = half pole-pitch displacement (typical DLIM sandwich).
  *  Adjust if thrust is lower than expected: try 60° or 120°.
  */
-static constexpr float PHASE_OFFSET_DEG = 90.0f;
+static constexpr float PHASE_OFFSET_DEG = 0.0f;
 
 /** Frequency at which V/f ratio reaches VF_MOD_IDX_AT_BASE [Hz]. */
 static constexpr float VF_BASE_FREQ_HZ = 5.0f;
@@ -53,6 +53,10 @@ static constexpr float VF_MOD_IDX_MIN = 0.12f;
 
 /** Hard ceiling on modulation index. */
 static constexpr float MOD_IDX_MAX = 0.85f;
+
+/** Attenuation factor for the middle coils (V1, V2) to compensate for
+ *  higher current draw due to linear motor end-effects and higher resistance. */
+static constexpr float V_PHASE_ATTENUATION = 0.85f;
 
 /** Soft current limit [A peak]. */
 static constexpr float CURRENT_LIMIT_A  = 20.0f;
@@ -134,12 +138,21 @@ MotorPwmControl control::control_loop(Voltage vdc) {
     const float t1 = s_theta_rad;
     const float t2 = s_theta_rad + PHASE_OFFSET_RAD;
     const float u1_ref = s_mod_idx * std::sin(t1);
-    const float v1_ref = s_mod_idx * std::sin(t1 - DEG120_RAD);
+    const float v1_ref = s_mod_idx * V_PHASE_ATTENUATION * std::sin(t1 - DEG120_RAD);
     const float w1_ref = s_mod_idx * std::sin(t1 - 2.0f * DEG120_RAD);
 
+    /*
+    // Just for testing: set winding 2 refs equal to winding 1 refs with a fixed phase offset.
+    const float u2_ref = s_mod_idx * std::sin(t1);
+    const float v2_ref = s_mod_idx * V_PHASE_ATTENUATION * std::sin(t1 - DEG120_RAD);
+    const float w2_ref = s_mod_idx * std::sin(t1 - 2.0f * DEG120_RAD);
+        */
+
+    // Taken off for wiring discrepancy
     const float u2_ref = s_mod_idx * std::sin(t2);
-    const float v2_ref = s_mod_idx * std::sin(t2 - DEG120_RAD);
+    const float v2_ref = s_mod_idx * V_PHASE_ATTENUATION * std::sin(t2 - DEG120_RAD);
     const float w2_ref = s_mod_idx * std::sin(t2 - 2.0f * DEG120_RAD);
+    
 
     // ── 6. Duty cycles  (center-aligned: 0.5 ± m/2) ──────────────────────────
     MotorPwmControl ctrl;
@@ -167,7 +180,7 @@ void control::update() {
          VF_BASE_FREQ_HZ * 3.0f
     );
     s_target_mod_idx = clampf(
-        0.2f,  // Fixed 0.2 modulation index for testbench --- can be increased with caution, but watch current limit!
+        0.8f,  // Fixed 0.5 modulation index for testbench
         0.0f,
         MOD_IDX_MAX
     );
