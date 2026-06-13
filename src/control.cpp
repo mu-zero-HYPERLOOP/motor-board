@@ -38,7 +38,7 @@
 static constexpr float PHASE_OFFSET_DEG = 0.0f;
 
 /** Frequency at which V/f ratio reaches VF_MOD_IDX_AT_BASE [Hz]. */
-static constexpr float VF_BASE_FREQ_HZ = 5.0f;
+static constexpr float VF_BASE_FREQ_HZ = 1.0f;
 
 /** Modulation index at base frequency.
  *  At 25 Hz, m=0.5 → I_peak ≈ (0.5 × 36.7 V) / 2.12 Ω ≈ 8.6 A  (safe).
@@ -175,7 +175,7 @@ MotorPwmControl control::control_loop(Voltage vdc) {
 void control::update() {
     // Set testbench setpoints → ISR-readable variables.
     s_target_freq_hz = clampf(
-        5.0f,  // Fixed 5 Hz frequency for testbench
+        1.0f,  // Fixed 1 Hz frequency for testbench
         -VF_BASE_FREQ_HZ * 3.0f,
          VF_BASE_FREQ_HZ * 3.0f
     );
