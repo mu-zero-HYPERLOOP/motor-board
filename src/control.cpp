@@ -2,6 +2,9 @@
  * @file control.cpp
  * @brief Open-loop V/f control for Double-sided Linear Induction Motor (DLIM)
  *
+ * IMPORTANT: HIGH MODULATION INDEX (m > 0.5) PAIRED WITH LOW FREQUENCY (f < 1 Hz)
+ * !!!!!!!!!!!!!!!!!     MAY EXCEED CURRENT LIMITS.     !!!!!!!!!!!!!!!!!!!
+ * 
  * Hardware: Two independent 3-phase windings, star (Wye) configuration.
  *           Each phase: R ≈ 0.9 Ω, L ≈ 4–20 mH (4 coils in series).
  *           DC bus: 45 V max.
@@ -149,9 +152,9 @@ MotorPwmControl control::control_loop(Voltage vdc) {
         */
 
     // Taken off for wiring discrepancy
-    const float u2_ref = s_mod_idx * std::sin(t2);
-    const float v2_ref = s_mod_idx * V_PHASE_ATTENUATION * std::sin(t2 - DEG120_RAD);
-    const float w2_ref = s_mod_idx * std::sin(t2 - 2.0f * DEG120_RAD);
+    const float u2_ref = s_mod_idx * std::sin(t1);
+    const float v2_ref = s_mod_idx * V_PHASE_ATTENUATION * std::sin(t1 - DEG120_RAD);
+    const float w2_ref = s_mod_idx * std::sin(t1 - 2.0f * DEG120_RAD);
     
 
     // ── 6. Duty cycles  (center-aligned: 0.5 ± m/2) ──────────────────────────
