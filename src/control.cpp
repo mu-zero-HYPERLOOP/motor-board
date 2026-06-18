@@ -42,13 +42,15 @@
  */
 static constexpr float PHASE_OFFSET_DEG = 90.0f;
 
-/** Frequency at which V/f ratio reaches VF_MOD_IDX_AT_BASE [Hz]. */
-static constexpr float VF_BASE_FREQ_HZ = 1.0f;
+/** Frequency at which V/f ratio reaches VF_MOD_IDX_AT_BASE [Hz].
+ *  Lowered to 15.0 Hz so voltage ramps up much faster to combat inductive reactance. */
+static constexpr float VF_BASE_FREQ_HZ = 15.0f;
 
 /** Modulation index at base frequency.
- *  At 25 Hz, m=0.5 → I_peak ≈ (0.5 × 36.7 V) / 2.12 Ω ≈ 8.6 A  (safe).
+ *  Boosted to match your hard ceiling. Trust your ISR current limiter to roll this back
+ *  if the current actually spikes past 50A.
  */
-static constexpr float VF_MOD_IDX_AT_BASE = 0.5f;
+static constexpr float VF_MOD_IDX_AT_BASE = 0.85f;
 
 /** Minimum modulation index at f→0 (resistive boost).
  *  m_min = I_target × R / (Vdc × sqrt(2/3))
@@ -64,9 +66,10 @@ static constexpr float CURRENT_LIMIT_A  = 50.0f;
 static constexpr float CURRENT_TARGET_A = 30.0f;
 
 /** Linear Motor Geometry and Slip Limits */
-static constexpr float POLE_PITCH_M = 0.05f;      // TODO: Replace with your DLIM's actual pole pitch in meters
-static constexpr float MAX_SPEED_MPS = 20.0f;     // Speed at which slip smoothly drops to 0.1
-static constexpr float MIN_STARTING_FREQ = 2.0f;  // Minimum frequency at standstill to generate initial thrust
+static constexpr float POLE_PITCH_M = 0.20f;      // TODO: Replace with your DLIM's actual pole pitch in meters
+static constexpr float MAX_SPEED_MPS = 5.0f;     // Speed at which slip smoothly drops to 0.1
+static constexpr float MIN_STARTING_FREQ = 1.0f;  // Minimum frequency at standstill to generate initial thrust
+static constexpr float MAX_ELEC_FREQ_HZ = (MAX_SPEED_MPS / (2.0f * POLE_PITCH_M)) * 1.5f; // ~18.75 Hz
 
 /** Speed Estimation State */
 static float s_estimated_speed_mps = 0.0f;
@@ -85,9 +88,10 @@ static float s_mod_idx   = 0.0f;
 static volatile float s_target_freq_hz = 0.0f;
 static volatile float s_target_mod_idx = 0.0f;  // 0 = auto V/f
 
-static constexpr float TWO_PI           = 2.0f * static_cast<float>(M_PI);
-static constexpr float PHASE_OFFSET_RAD = PHASE_OFFSET_DEG * (static_cast<float>(M_PI) / 180.0f);
-static constexpr float DEG120_RAD       = TWO_PI / 3.0f;
+static constexpr float MATH_PI_F        = 3.14159265358979323846f;
+static constexpr float TWO_PI_F         = 2.0f * MATH_PI_F;
+static constexpr float PHASE_OFFSET_RAD = PHASE_OFFSET_DEG * (MATH_PI_F / 180.0f);
+static constexpr float DEG120_RAD       = TWO_PI_F / 3.0f;
 
 // ============================================================================
 // Helpers
@@ -171,10 +175,10 @@ MotorPwmControl control::control_loop(Voltage /*vdc*/) {
 
     // ── 4. Advance electrical angle ───────────────────────────────────────────
     const float f_pwm   = static_cast<float>(pwm::frequency());  // ~20000 Hz
-    const float d_theta = TWO_PI * s_freq_hz / f_pwm;
+    const float d_theta = TWO_PI_F * s_freq_hz / f_pwm;
     s_theta_rad += d_theta;
-    while (s_theta_rad >= TWO_PI) s_theta_rad -= TWO_PI;
-    while (s_theta_rad <  0.0f  ) s_theta_rad += TWO_PI;
+    while (s_theta_rad >= TWO_PI_F) s_theta_rad -= TWO_PI_F;
+    while (s_theta_rad <  0.0f  ) s_theta_rad += TWO_PI_F;
 
     // ── 5. Three-phase references ─────────────────────────────────────────────
     // Winding 1: angle θ
@@ -244,8 +248,8 @@ void control::update() {
     // Override pure CAN frequency setpoint with our newly calculated slip-compensated frequency
     s_target_freq_hz = clampf(
         target_f_e,
-        -VF_BASE_FREQ_HZ * 3.0f,
-         VF_BASE_FREQ_HZ * 3.0f
+        -MAX_ELEC_FREQ_HZ,
+         MAX_ELEC_FREQ_HZ
     );
     s_target_mod_idx = clampf(
         canzero_get_modulation_index(),
