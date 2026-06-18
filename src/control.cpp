@@ -6,6 +6,9 @@
  *           Each phase: R ≈ 0.9 Ω, L ≈ 4–20 mH (4 coils in series).
  *           DC bus: 45 V max.
  *
+ * IMPORTANT: HIGH MODULATION INDEX (m > 0.5) PAIRED WITH LOW FREQUENCY (f < 1 Hz)
+ * !!!!!!!!!!!!!!!!!     MAY EXCEED CURRENT LIMITS.     !!!!!!!!!!!!!!!!!!!
+ * 
  * Key design decision: setpoint variables (s_target_*) are written ONLY
  * by control::update() from the main loop, and read ONLY by control_loop()
  * in the ISR.  The ISR never calls canzero_set_frequency() etc. — those
@@ -39,7 +42,7 @@
 static constexpr float PHASE_OFFSET_DEG = 90.0f;
 
 /** Frequency at which V/f ratio reaches VF_MOD_IDX_AT_BASE [Hz]. */
-static constexpr float VF_BASE_FREQ_HZ = 25.0f;
+static constexpr float VF_BASE_FREQ_HZ = 1.0f;
 
 /** Modulation index at base frequency.
  *  At 25 Hz, m=0.5 → I_peak ≈ (0.5 × 36.7 V) / 2.12 Ω ≈ 8.6 A  (safe).
@@ -56,8 +59,8 @@ static constexpr float VF_MOD_IDX_MIN = 0.12f;
 static constexpr float MOD_IDX_MAX = 0.85f;
 
 /** Soft current limit [A peak]. */
-static constexpr float CURRENT_LIMIT_A  = 20.0f;
-static constexpr float CURRENT_TARGET_A = 15.0f;
+static constexpr float CURRENT_LIMIT_A  = 50.0f;
+static constexpr float CURRENT_TARGET_A = 30.0f;
 
 // ============================================================================
 // Internal state
