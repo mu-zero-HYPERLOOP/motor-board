@@ -30,6 +30,7 @@
 #include <cmath>
 #include <algorithm>          // Add this
 #include <initializer_list>   // Add this (good practice when using {})
+#include <Arduino.h>          // Required for micros()
 
 // ============================================================================
 // Configuration
@@ -62,6 +63,14 @@ static constexpr float MOD_IDX_MAX = 0.85f;
 static constexpr float CURRENT_LIMIT_A  = 50.0f;
 static constexpr float CURRENT_TARGET_A = 30.0f;
 
+/** Linear Motor Geometry and Slip Limits */
+static constexpr float POLE_PITCH_M = 0.05f;      // TODO: Replace with your DLIM's actual pole pitch in meters
+static constexpr float MAX_SPEED_MPS = 20.0f;     // Speed at which slip smoothly drops to 0.1
+static constexpr float MIN_STARTING_FREQ = 2.0f;  // Minimum frequency at standstill to generate initial thrust
+
+/** Speed Estimation State */
+static float s_estimated_speed_mps = 0.0f;
+
 // ============================================================================
 // Internal state
 // ============================================================================
@@ -91,6 +100,25 @@ static inline float clampf(float v, float lo, float hi) {
 // ============================================================================
 // Public API
 // ============================================================================
+
+/**
+ * @brief Estimates mechanical speed fusing CAN data (Acceleration + External Velocity)
+ */
+static float estimate_speed(float dt) {
+    // Read acceleration from local IMU via CANZero
+    float accel_x = canzero_get_acceleration();
+    
+    // Read external absolute velocity via CANZero (e.g. from Fiducial/Guidance node)
+    float v_external = canzero_get_external_velocity();
+    
+    // Integrate IMU acceleration
+    float v_imu = s_estimated_speed_mps + (accel_x * dt);
+
+    // Complementary Filter: heavily trust IMU for short-term, external velocity for long-term drift correction
+    float alpha = 0.98f; 
+    s_estimated_speed_mps = alpha * v_imu + (1.0f - alpha) * v_external;
+    return s_estimated_speed_mps;
+}
 
 void control::begin() {
     s_theta_rad      = 0.0f;
@@ -185,9 +213,37 @@ MotorPwmControl control::control_loop(Voltage /*vdc*/) {
  *   Write OD index 27 (modulation_index) leave at 0 for auto V/f
  */
 void control::update() {
-    // Bridge CAN setpoints → ISR-readable variables.
+    // 1. Calculate time delta (dt) accurately for integration
+    static uint32_t last_time = 0;
+    uint32_t now = micros();
+    float dt = (last_time == 0) ? 0.01f : (now - last_time) * 1e-6f;
+    last_time = now;
+    if (dt <= 0.0f) dt = 0.001f;
+
+    // 2. Estimate current mechanical velocity using CAN variables
+    float v_actual = estimate_speed(dt);
+
+    // 3. Dynamic Slip mapping: 0.3 at low speeds (high thrust), 0.1 at max speed (efficiency)
+    float abs_v = std::abs(v_actual);
+    float target_slip = 0.3f - 0.2f * clampf(abs_v / MAX_SPEED_MPS, 0.0f, 1.0f);
+
+    // 4. Convert mechanical speed to target electrical frequency
+    float f_mech = abs_v / (2.0f * POLE_PITCH_M);
+    float target_f_e = f_mech / (1.0f - target_slip);
+    
+    // Preserve direction based on CAN command, and allow stopping
+    float cmd_freq = canzero_get_frequency();
+    if (std::abs(cmd_freq) < 0.01f) {
+        target_f_e = 0.0f; // Stop condition requested by CAN
+    } else {
+        // Ensure a minimum electrical frequency to generate thrust at standstill
+        target_f_e = std::max(target_f_e, MIN_STARTING_FREQ);
+        if (cmd_freq < 0.0f) target_f_e = -target_f_e; // Apply reverse direction
+    }
+
+    // Override pure CAN frequency setpoint with our newly calculated slip-compensated frequency
     s_target_freq_hz = clampf(
-        canzero_get_frequency(),
+        target_f_e,
         -VF_BASE_FREQ_HZ * 3.0f,
          VF_BASE_FREQ_HZ * 3.0f
     );
