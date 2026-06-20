@@ -246,9 +246,17 @@ void control::update() {
         if (cmd_freq < 0.0f) target_f_e = -target_f_e; // Apply reverse direction
     }
 
+    // 5. Slew Rate Limiter (Jerk Control)
+    // Prevent the electrical frequency from jumping too fast to protect hardware
+    static float s_current_f_e = 0.0f;
+    float max_delta = MAX_FREQ_ACCEL_HZ_PER_SEC * dt;
+    if (target_f_e > s_current_f_e + max_delta) s_current_f_e += max_delta;
+    else if (target_f_e < s_current_f_e - max_delta) s_current_f_e -= max_delta;
+    else s_current_f_e = target_f_e;
+
     // Override pure CAN frequency setpoint with our newly calculated slip-compensated frequency
     s_target_freq_hz = clampf(
-        target_f_e,
+        s_current_f_e,
         -MAX_ELEC_FREQ_HZ,
          MAX_ELEC_FREQ_HZ
     );
@@ -258,11 +266,12 @@ void control::update() {
         MOD_IDX_MAX
     );
 
-    // Publish actual values as read-back telemetry.
-    // Note: s_freq_hz / s_mod_idx are written by ISR; a torn read here
-    // is harmless (just slightly stale telemetry).
-    canzero_set_frequency(s_freq_hz);
-    canzero_set_modulation_index(s_mod_idx);
+    // TELEMETRY BUG FIX: 
+    // Do NOT write the actual frequency back to canzero_set_frequency() here.
+    // Doing so overwrites the setpoint command (canzero_get_frequency()) received from the CAN bus!
+    // If you need to broadcast telemetry, create a separate OD variable like 'actual_frequency'.
+    // canzero_set_frequency(s_freq_hz);
+    // canzero_set_modulation_index(s_mod_idx);
 
     // control_active flag
     const motor_state st = canzero_get_state();
