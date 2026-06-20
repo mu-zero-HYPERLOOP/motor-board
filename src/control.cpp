@@ -70,6 +70,7 @@ static constexpr float POLE_PITCH_M = 0.20f;      // TODO: Replace with your DLI
 static constexpr float MAX_SPEED_MPS = 5.0f;     // Speed at which slip smoothly drops to 0.1
 static constexpr float MIN_STARTING_FREQ = 1.0f;  // Minimum frequency at standstill to generate initial thrust
 static constexpr float MAX_ELEC_FREQ_HZ = (MAX_SPEED_MPS / (2.0f * POLE_PITCH_M)) * 1.5f; // ~18.75 Hz
+static constexpr float MAX_FREQ_ACCEL_HZ_PER_SEC = 50.0f; // Maximum rate of frequency change (Slew Rate Limit)
 
 /** Speed Estimation State */
 static float s_estimated_speed_mps = 0.0f;
