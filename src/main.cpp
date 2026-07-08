@@ -82,6 +82,13 @@ int main() {
     control::update();
     debugPrintf("Control Active: Waiting in main loop...\n");
     // motor_board::delay(0.01_s);
+    if (sdc_status_OPEN == true) {
+      sdc_brake::release_brake();
+      while(true) {
+      // motor_board::delay(1_s);
+      debugPrintf("Failed to open SDC.");
+      }
+    }
   }
 }
 // git branch check: testing-sv & testing-svi

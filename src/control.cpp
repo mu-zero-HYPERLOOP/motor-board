@@ -38,7 +38,7 @@
  *  90° = half pole-pitch displacement (typical DLIM sandwich).
  *  Adjust if thrust is lower than expected: try 60° or 120°.
  */
-static constexpr float PHASE_OFFSET_DEG = 0.0f;
+static constexpr float PHASE_OFFSET_DEG = 90.0f;
 
 /** Frequency at which V/f ratio reaches VF_MOD_IDX_AT_BASE [Hz]. */
 static constexpr float VF_BASE_FREQ_HZ = 1.0f;
@@ -152,9 +152,9 @@ MotorPwmControl control::control_loop(Voltage vdc) {
         */
 
     // Taken off for wiring discrepancy
-    const float u2_ref = s_mod_idx * std::sin(t1);
-    const float v2_ref = s_mod_idx * V_PHASE_ATTENUATION * std::sin(t1 - DEG120_RAD);
-    const float w2_ref = s_mod_idx * std::sin(t1 - 2.0f * DEG120_RAD);
+    const float u2_ref = s_mod_idx * std::sin(t2);
+    const float v2_ref = s_mod_idx * V_PHASE_ATTENUATION * std::sin(t2 - DEG120_RAD);
+    const float w2_ref = s_mod_idx * std::sin(t2 - 2.0f * DEG120_RAD);
     
 
     // ── 6. Duty cycles  (center-aligned: 0.5 ± m/2) ──────────────────────────
@@ -178,12 +178,12 @@ MotorPwmControl control::control_loop(Voltage vdc) {
 void control::update() {
     // Set testbench setpoints → ISR-readable variables.
     s_target_freq_hz = clampf(
-        1.0f,  // Fixed 1 Hz frequency for testbench
+        2.0f,  // Fixed 1 Hz frequency for testbench
         -VF_BASE_FREQ_HZ * 3.0f,
          VF_BASE_FREQ_HZ * 3.0f
     );
     s_target_mod_idx = clampf(
-        0.8f,  // Fixed 0.5 modulation index for testbench
+        0.5f,  // Fixed 0.5 modulation index for testbench
         0.0f,
         MOD_IDX_MAX
     );
