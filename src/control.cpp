@@ -178,12 +178,12 @@ MotorPwmControl control::control_loop(Voltage vdc) {
 void control::update() {
     // Set testbench setpoints → ISR-readable variables.
     s_target_freq_hz = clampf(
-        2.0f,  // Fixed 1 Hz frequency for testbench
+        10.0f,  // Fixed 1 Hz frequency for testbench
         -VF_BASE_FREQ_HZ * 3.0f,
          VF_BASE_FREQ_HZ * 3.0f
     );
     s_target_mod_idx = clampf(
-        0.5f,  // Fixed 0.5 modulation index for testbench
+        0.4f,  // Fixed 0.5 modulation index for testbench
         0.0f,
         MOD_IDX_MAX
     );
