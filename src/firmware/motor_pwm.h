@@ -12,4 +12,6 @@ struct MotorPwmControl {
   constexpr operator PwmControl() const {
     return PwmControl(U1_duty, V2_duty, U2_duty, W2_duty, W1_duty, V1_duty);
   }
+
+  MotorPwmControl() : U1_duty(0.5f), V2_duty(0.5f), U2_duty(0.5f), W2_duty(0.5f), W1_duty(0.5f), V1_duty(0.5f) {}
 };

@@ -27,6 +27,7 @@
 #include "firmware/motor_pwm.h"
 #include "firmware/pwm.h"
 #include "util/metrics.h"
+#include "sdc_brake.h"
 #include <cmath>
 #include <algorithm>          // Add this
 #include <initializer_list>   // Add this (good practice when using {})
@@ -62,15 +63,14 @@ static constexpr float VF_MOD_IDX_MIN = 0.12f;
 static constexpr float MOD_IDX_MAX = 0.85f;
 
 /** Soft current limit [A peak]. */
-static constexpr float CURRENT_LIMIT_A  = 50.0f;
-static constexpr float CURRENT_TARGET_A = 30.0f;
+static constexpr float CURRENT_LIMIT_A  = 35.0f;
+static constexpr float CURRENT_TARGET_A = 25.0f;
 
 /** Linear Motor Geometry and Slip Limits */
-static constexpr float POLE_PITCH_M = 0.20f;      // TODO: Replace with your DLIM's actual pole pitch in meters
+static constexpr float POLE_PITCH_M = 0.065f;      // TODO: Replace with your DLIM's actual pole pitch in meters
 static constexpr float MAX_SPEED_MPS = 5.0f;     // Speed at which slip smoothly drops to 0.1
 static constexpr float MIN_STARTING_FREQ = 1.0f;  // Minimum frequency at standstill to generate initial thrust
-static constexpr float MAX_ELEC_FREQ_HZ = (MAX_SPEED_MPS / (2.0f * POLE_PITCH_M)) * 1.5f; // ~18.75 Hz
-static constexpr float MAX_FREQ_ACCEL_HZ_PER_SEC = 50.0f; // Maximum rate of frequency change (Slew Rate Limit)
+static constexpr float MAX_ELEC_FREQ_HZ = 50.0f; // Maximum electrical frequency
 
 /** Speed Estimation State */
 static float s_estimated_speed_mps = 0.0f;
@@ -109,19 +109,13 @@ static inline float clampf(float v, float lo, float hi) {
 /**
  * @brief Estimates mechanical speed fusing CAN data (Acceleration + External Velocity)
  */
-static float estimate_speed(float dt) {
-    // Read acceleration from local IMU via CANZero
-    float accel_x = canzero_get_acceleration();
+static float get_estimated_speed() {
+    // Read external velocity from CANZero
+    const float external_velocity = canzero_get_external_velocity();
     
-    // Read external absolute velocity via CANZero (e.g. from Fiducial/Guidance node)
-    float v_external = canzero_get_external_velocity();
+    // Integrate external velocity
+    s_estimated_speed_mps = external_velocity;
     
-    // Integrate IMU acceleration
-    float v_imu = s_estimated_speed_mps + (accel_x * dt);
-
-    // Complementary Filter: heavily trust IMU for short-term, external velocity for long-term drift correction
-    float alpha = 0.98f; 
-    s_estimated_speed_mps = alpha * v_imu + (1.0f - alpha) * v_external;
     return s_estimated_speed_mps;
 }
 
@@ -163,7 +157,7 @@ MotorPwmControl control::control_loop(Voltage /*vdc*/) {
         std::abs(canzero_get_current_v2()),
         std::abs(canzero_get_current_w2())
     });
-
+    // mod control with max current safety. 
     if (i_max > CURRENT_LIMIT_A && s_mod_idx > 0.001f) {
         const float m_safe = s_mod_idx * (CURRENT_TARGET_A / i_max);
         desired_mod = std::min(desired_mod, m_safe);
@@ -186,14 +180,33 @@ MotorPwmControl control::control_loop(Voltage /*vdc*/) {
     // Winding 2: angle θ + spatial offset (90° for half-pole-pitch DLIM)
     const float t1 = s_theta_rad;
     const float t2 = s_theta_rad + PHASE_OFFSET_RAD;
-    const float u1_ref = s_mod_idx * std::sin(t1);
-    const float v1_ref = s_mod_idx * std::sin(t1 - DEG120_RAD);
-    const float w1_ref = s_mod_idx * std::sin(t1 - 2.0f * DEG120_RAD);
+    float u1_ref = 0;
+    float v1_ref = 0;
+    float w1_ref = 0;
+    float u2_ref = 0;
+    float v2_ref = 0;
+    float w2_ref = 0;
 
-    const float u2_ref = s_mod_idx * std::sin(t2);
-    const float v2_ref = s_mod_idx * std::sin(t2 - DEG120_RAD);
-    const float w2_ref = s_mod_idx * std::sin(t2 - 2.0f * DEG120_RAD);
+    if (s_freq_hz > 0) { // forward direction
+        u1_ref = s_mod_idx * std::sin(t1);
+        v1_ref = s_mod_idx * std::sin(t1 - DEG120_RAD);
+        w1_ref = s_mod_idx * std::sin(t1 - 2.0f * DEG120_RAD);
 
+        u2_ref = s_mod_idx * std::sin(t2);
+        v2_ref = s_mod_idx * std::sin(t2 - DEG120_RAD);
+        w2_ref = s_mod_idx * std::sin(t2 - 2.0f * DEG120_RAD);
+    }
+    else if (s_freq_hz < 0) // Reverse direction
+    {
+        w1_ref = s_mod_idx * std::sin(t1);
+        v1_ref = s_mod_idx * std::sin(t1 - DEG120_RAD);
+        u1_ref = s_mod_idx * std::sin(t1 - 2.0f * DEG120_RAD);
+
+        w2_ref = s_mod_idx * std::sin(t2);
+        v2_ref = s_mod_idx * std::sin(t2 - DEG120_RAD);
+        u2_ref = s_mod_idx * std::sin(t2 - 2.0f * DEG120_RAD);
+    }
+    
     // ── 6. Duty cycles  (center-aligned: 0.5 ± m/2) ──────────────────────────
     MotorPwmControl ctrl;
     ctrl.U1_duty = 0.5f + 0.5f * u1_ref;
@@ -218,24 +231,17 @@ MotorPwmControl control::control_loop(Voltage /*vdc*/) {
  *   Write OD index 27 (modulation_index) leave at 0 for auto V/f
  */
 void control::update() {
-    // 1. Calculate time delta (dt) accurately for integration
-    static uint32_t last_time = 0;
-    uint32_t now = micros();
-    float dt = (last_time == 0) ? 0.01f : (now - last_time) * 1e-6f;
-    last_time = now;
-    if (dt <= 0.0f) dt = 0.001f;
+    // 1. Estimate current mechanical velocity using CAN variables
+    float v_actual = get_estimated_speed();
 
-    // 2. Estimate current mechanical velocity using CAN variables
-    float v_actual = estimate_speed(dt);
-
-    // 3. Dynamic Slip mapping: 0.3 at low speeds (high thrust), 0.1 at max speed (efficiency)
+    // 2. Dynamic Slip mapping: 0.3 at low speeds (high thrust), 0.1 at max speed (efficiency)
     float abs_v = std::abs(v_actual);
-    float target_slip = 0.3f - 0.2f * clampf(abs_v / MAX_SPEED_MPS, 0.0f, 1.0f);
+    float target_slip = 0.3f - (0.2f * clampf(abs_v / MAX_SPEED_MPS, 0.0f, 1.0f));
 
-    // 4. Convert mechanical speed to target electrical frequency
+    // 3. Convert mechanical speed to target electrical frequency
     float f_mech = abs_v / (2.0f * POLE_PITCH_M);
     float target_f_e = f_mech / (1.0f - target_slip);
-    
+
     // Preserve direction based on CAN command, and allow stopping
     float cmd_freq = canzero_get_frequency();
     if (std::abs(cmd_freq) < 0.01f) {
@@ -246,19 +252,37 @@ void control::update() {
         if (cmd_freq < 0.0f) target_f_e = -target_f_e; // Apply reverse direction
     }
 
-    // 5. Slew Rate Limiter (Jerk Control)
-    // Prevent the electrical frequency from jumping too fast to protect hardware
-    static float s_current_f_e = 0.0f;
-    float max_delta = MAX_FREQ_ACCEL_HZ_PER_SEC * dt;
-    if (target_f_e > s_current_f_e + max_delta) s_current_f_e += max_delta;
-    else if (target_f_e < s_current_f_e - max_delta) s_current_f_e -= max_delta;
-    else s_current_f_e = target_f_e;
+    // ── 4. DIRECTIONAL SAFETY INTERLOCK (SDC CHECK) ──────────────────────────
+    // We allow starting from a standstill, so the mismatch check only triggers
+    // if the pod has established a physical direction that opposes our commanded magnetic field.
+    static constexpr float VELOCITY_DEADBAND_MPS = 0.05f; // Ignore noise below 5 cm/s
+    bool direction_mismatch = false;
+
+    if (target_f_e > 0.1f && v_actual < -VELOCITY_DEADBAND_MPS) {
+        // Commanded FORWARD, but physically rolling BACKWARD
+        direction_mismatch = true;
+    } 
+    else if (target_f_e < -0.1f && v_actual > VELOCITY_DEADBAND_MPS) {
+        // Commanded REVERSE, but physically rolling FORWARD
+        direction_mismatch = true;
+    }
+
+    if (direction_mismatch) {
+        sdc_brake::brake_immediatly(); // Call your SDC brake function
+        target_f_e = 0.0f;
+        // Do not proceed further in this update cycle.
+        // Set targets to zero and return.
+        s_target_freq_hz = 0.0f;
+        s_target_mod_idx = 0.0f;
+        canzero_set_control_active(bool_t_FALSE);
+        return; 
+    }
 
     // Override pure CAN frequency setpoint with our newly calculated slip-compensated frequency
     s_target_freq_hz = clampf(
-        s_current_f_e,
+        target_f_e,
         -MAX_ELEC_FREQ_HZ,
-         MAX_ELEC_FREQ_HZ
+        MAX_ELEC_FREQ_HZ
     );
     s_target_mod_idx = clampf(
         canzero_get_modulation_index(),
@@ -268,8 +292,6 @@ void control::update() {
 
     // TELEMETRY BUG FIX: 
     // Do NOT write the actual frequency back to canzero_set_frequency() here.
-    // Doing so overwrites the setpoint command (canzero_get_frequency()) received from the CAN bus!
-    // If you need to broadcast telemetry, create a separate OD variable like 'actual_frequency'.
     // canzero_set_frequency(s_freq_hz);
     // canzero_set_modulation_index(s_mod_idx);
 

@@ -887,7 +887,7 @@ static void schedule_jobs(uint32_t time) {
         stream_message.m_config_hash = __oe_config_hash;
         canzero_frame stream_frame;
         canzero_serialize_canzero_message_motor_driver_stream_config_hash(&stream_message, &stream_frame);
-        canzero_can1_send(&stream_frame);
+        canzero_can0_send(&stream_frame);
         break;
       }
         default:
@@ -2671,7 +2671,7 @@ uint32_t canzero_update_continue(uint32_t time){
 #define BUILD_MIN   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_MIN)
 #define BUILD_SEC   ((BUILD_TIME_IS_BAD) ? 99 :  COMPUTE_BUILD_SEC)
 void canzero_init() {
-  __oe_config_hash = 969764988675021836ull;
+  __oe_config_hash = 5399977892005846672ull;
   __oe_build_time = {
     .m_year = BUILD_YEAR,
     .m_month = BUILD_MONTH,

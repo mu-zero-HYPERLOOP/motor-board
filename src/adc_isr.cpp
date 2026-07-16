@@ -7,9 +7,6 @@
 #include "sensors/formula/isolated_voltage.h"
 
 void adc_etc_done0_isr(AdcTrigRes res) {
-  /* const Voltage vdc_v_meas = res.trig_res(TRIG0, 0); */
-  /* sensors::formula::isolated_voltage(vdc_v_meas); */
-
   const MotorPwmControl pwm_control = control::control_loop(0_V);
 
   pwm::control(static_cast<PwmControl>(pwm_control));
